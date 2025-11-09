@@ -61,6 +61,17 @@ class mod_cardbox_renderer extends plugin_renderer_base {
 
         global $USER;
 
+        // Check if user is a student (has practice capability but not approve capability).
+        $isstudent = has_capability('mod/cardbox:practice', $context) && 
+                     !has_capability('mod/cardbox:approvecard', $context);
+
+        // If user is a student, only show Practice tab.
+        if ($isstudent) {
+            $level1 = array($this->cardbox_create_tab($baseurl, 'practice', 'practice'));
+            return $this->tabtree($level1, $selected, $inactive);
+        }
+
+        // For non-students (teachers, managers, etc.), show all relevant tabs.
         if (has_capability('mod/cardbox:submitcard', $context)) {
             $level1 = array($this->cardbox_create_tab($baseurl, 'addflashcard', 'addflashcard'));
             $level1[] = $this->cardbox_create_tab($baseurl, 'massimport', 'massimport');

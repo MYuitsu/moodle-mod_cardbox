@@ -41,8 +41,17 @@ $context = context_module::instance($cm->id);
 $PAGE->set_title(get_string('activityname', 'cardbox'));
 $PAGE->set_heading($course->fullname); // Set course name for display.
 
+// Check if user is a student (has practice capability but not approve capability).
+$isstudent = has_capability('mod/cardbox:practice', $context) && 
+             !has_capability('mod/cardbox:approvecard', $context);
+
 // Go to (default) page.
-if (has_capability('mod/cardbox:practice', $context)) { // for students and other participants.
+if ($isstudent) {
+    // Students can only access practice action.
+    $requestedaction = optional_param('action', 'practice', PARAM_ALPHA);
+    // Force students to practice only, ignore any other action request.
+    $action = 'practice';
+} else if (has_capability('mod/cardbox:practice', $context)) { // for other participants with practice capability.
     $action = optional_param('action', 'practice', PARAM_ALPHA);
 
 } else if (has_capability('mod/cardbox:approvecard', $context)) {

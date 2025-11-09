@@ -33,6 +33,16 @@ if (!isset($action)) {
     $action = required_param('action', PARAM_ALPHA);
 }
 
+// Check if user is a student (has practice capability but not approve capability).
+$isstudent = has_capability('mod/cardbox:practice', $context) && 
+             !has_capability('mod/cardbox:approvecard', $context);
+
+// If user is a student and tries to access anything other than practice, redirect to practice.
+if ($isstudent && $action !== 'practice') {
+    $practiceurl = new moodle_url('/mod/cardbox/view.php', array('id' => $cmid, 'action' => 'practice'));
+    redirect($practiceurl);
+}
+
 /* *********************************************** Add a new flashcard *********************************************** */
 
 if ($action === 'addflashcard') {
