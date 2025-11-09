@@ -78,7 +78,13 @@ if ($action === 'updateandnext') {
     // 2. Get next card and pass it to javascript for rendering.
     if ($next != 0) {
         $renderer = $PAGE->get_renderer('mod_cardbox');
-        $practice = new cardbox_practice($case, $context, $next, $cardsleft, !$correction);
+        // For flashcard mode, always show question (case 6), not answer
+        if ($correction == 2) {
+            $nextcase = 6; // Question flashcard
+        } else {
+            $nextcase = $case; // Keep the same case for other modes
+        }
+        $practice = new cardbox_practice($nextcase, $context, $next, $cardsleft, !$correction);
         $newdata = $practice->export_for_template($renderer);
 
         echo json_encode(['status' => 'success', 'lastposition' => $lastposition, 'newdata' => $newdata]);

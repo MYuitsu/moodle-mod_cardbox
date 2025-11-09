@@ -629,10 +629,12 @@ if ($action === 'practice') {
             array_push($autocorrectval, $card.'_'.$acvalue->disableautocorrect);
         }
         // 2. Create a view controller.
-        if ($correction % 2 == 0) {
+        if ($correction == 2) {
+            $case = 6; // Flashcard mode - Question.
+        } else if ($correction % 2 == 0) {
             $case = 2; // Automatic Check.
         } else {
-            $case = 1;
+            $case = 1; // Self Check.
         }
         /*$cardstatus = $DB->get_record('cardbox_cards', array('id' => $selection[0]));
         if ($cardstatus->disableautocorrect) {

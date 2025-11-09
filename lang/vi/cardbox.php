@@ -167,6 +167,7 @@ $string['titleforchoosesettings'] = 'Tùy chọn luyện tập';
 $string['choosecorrectionmode'] = 'Chế độ luyện tập';
 $string['selfcorrection'] = 'Tự kiểm tra';
 $string['autocorrection'] = 'Kiểm tra tự động';
+$string['flashcardmode'] = 'Chế độ Flashcard';
 $string['weightopic'] = 'Tập trung';
 $string['notopicpreferred'] = 'không ưu tiên';
 $string['practiceall'] = 'Luyện tập tất cả thẻ';
@@ -196,6 +197,11 @@ $string['suggestanswer_label'] = 'Vui lòng đề xuất giải pháp mới';
 $string['suggestanswer'] = 'Đề xuất câu trả lời';
 $string['suggestanswer_send'] = 'Gửi câu trả lời';
 $string['cardsleft'] = 'Thẻ còn lại:';
+$string['nextcard'] = 'Thẻ Tiếp Theo';
+$string['correct'] = 'Đúng rồi!';
+$string['incorrect'] = 'Sai rồi';
+$string['correctanswer'] = 'Đáp Án Đúng';
+$string['explanation'] = 'Giải Thích';
 
 $string['solution'] = 'Giải pháp';
 $string['yoursolution'] = 'Câu trả lời của bạn';
@@ -341,3 +347,13 @@ $string['event:card_deleted'] = 'Thẻ bị xóa';
 $string['event:card_updated'] = 'Thẻ được cập nhật';
 $string['event:practice_session_ended'] = 'Phiên luyện tập kết thúc';
 $string['event:practice_session_started'] = 'Phiên luyện tập bắt đầu';
+
+// Flashcard mode - 9 option placeholders
+$string['option_placeholder_1'] = 'Lựa chọn A';
+$string['option_placeholder_2'] = 'Lựa chọn B';
+$string['option_placeholder_3'] = 'Lựa chọn C';
+$string['option_placeholder_4'] = 'Lựa chọn D';
+$string['option_placeholder_5'] = 'Lựa chọn E';
+$string['option_placeholder_6'] = 'Lựa chọn F';
+$string['option_placeholder_7'] = 'Lựa chọn G';
+$string['option_placeholder_8'] = 'Lựa chọn H';

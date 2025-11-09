@@ -27,6 +27,8 @@ define ('QUESTION_AUTOCHECK', 2);
 define ('ANSWER_SELFCHECK', 3);
 define ('ANSWER_AUTOCHECK', 4);
 define('SUGGEST_ANSWER', 5);
+define('QUESTION_FLASHCARD', 6);
+define('ANSWER_FLASHCARD', 7);
 define ('TOPIC_IS_NULL', -1);
 
 class cardbox_practice implements \renderable, \templatable {
@@ -40,6 +42,8 @@ class cardbox_practice implements \renderable, \templatable {
     private $case3 = false; // Answer_selfcheck.
     private $case4 = false; // Answer_autocheck.
     private $case5 = false; // Suggest_answer.
+    private $case6 = false; // Question_flashcard.
+    private $case7 = false; // Answer_flashcard.
     private $inputfields = array();
     private $questioncontext = null;
     private $answercontext = null;
@@ -48,6 +52,9 @@ class cardbox_practice implements \renderable, \templatable {
     private $answercount = 0;
     private $cardsleft;
     private $render_ans = array();
+    private $flashcardoptions = array();
+    private $deck;
+    private $deckimgurl;
 
     /**
      * Function builds the view of a flashcard during practice.
@@ -97,6 +104,16 @@ class cardbox_practice implements \renderable, \templatable {
                 $casename = 'case'.SUGGEST_ANSWER;
                 $this->$casename = true;
                 $this->case = SUGGEST_ANSWER;
+                break;
+            case QUESTION_FLASHCARD:
+                $casename = 'case'.QUESTION_FLASHCARD;
+                $this->$casename = true;
+                $this->case = QUESTION_FLASHCARD;
+                break;
+            case ANSWER_FLASHCARD:
+                $casename = 'case'.ANSWER_FLASHCARD;
+                $this->$casename = true;
+                $this->case = ANSWER_FLASHCARD;
                 break;
             default:
                 // TODO Error handling.
@@ -187,7 +204,138 @@ class cardbox_practice implements \renderable, \templatable {
         if ($this->necessaryanswers != 0) {
             $this->inputfields = ['number' => '1'];
         }
+        
+        // Generate flashcard options if in flashcard mode
+        if ($this->case == QUESTION_FLASHCARD || $this->case == ANSWER_FLASHCARD) {
+            $this->generate_flashcard_options($cardid);
+        }
     }
+    
+    /**
+     * Generate 6 multiple choice options for flashcard mode (1 correct + 5 wrong)
+     * Wrong answers are randomly selected from other cards in the same topic
+     * @param int $cardid
+     */
+    private function generate_flashcard_options($cardid) {
+        global $DB;
+        
+        if (empty($this->answer['texts'])) {
+            return;
+        }
+        
+        // Get the correct answer and strip HTML tags
+        $correctanswer = $this->answer['texts'][0]['puretext'];
+        $correctanswer = strip_tags($correctanswer);
+        $correctanswer = trim($correctanswer);
+        
+        // Add correct answer with context
+        $this->flashcardoptions[] = array(
+            'answer' => $correctanswer,
+            'iscorrect' => 1,
+            'context' => $this->answercontext ? $this->answercontext : ''
+        );
+        
+        // Get current card's topic
+        $currentcard = $DB->get_record('cardbox_cards', array('id' => $cardid), 'cardbox, topic');
+        $topicid = $currentcard->topic;
+        
+        // Get wrong answers from OTHER CARDS in the SAME topic (regardless of cardbox)
+        // Use ORDER BY id for better compatibility across different databases
+        $sql = "SELECT DISTINCT cc.id as cardid, cct.id as contentid, cct.content
+                FROM {cardbox_cards} cc
+                JOIN {cardbox_cardcontents} cct ON cc.id = cct.card
+                WHERE cc.topic = :topicid
+                AND cc.id != :cardid
+                AND cc.approved = 1
+                AND cct.cardside = 1
+                AND cct.contenttype = 0
+                AND cct.area != 3";
+        
+        $wronganswers = $DB->get_records_sql($sql, array(
+            'topicid' => $topicid, 
+            'cardid' => $cardid
+        ));
+        
+        // Shuffle the results in PHP instead of SQL RAND()
+        if (!empty($wronganswers)) {
+            $wronganswers = array_values($wronganswers); // Reset array keys
+            shuffle($wronganswers);
+        }
+        
+        $wrongcount = 0;
+        $addedanswers = array($correctanswer); // Track added answers to avoid duplicates
+        
+        foreach ($wronganswers as $wrong) {
+            if ($wrongcount >= 5) {
+                break; // We need exactly 5 wrong answers
+            }
+            
+            $wrongtext = strip_tags($wrong->content);
+            $wrongtext = trim($wrongtext);
+            
+            // Make sure it's different from correct answer, not empty, and not duplicate
+            if (!in_array($wrongtext, $addedanswers) && !empty($wrongtext) && strlen($wrongtext) > 0) {
+                // Get context for this wrong answer
+                $wrongcontext = $DB->get_field_sql(
+                    "SELECT content FROM {cardbox_cardcontents} 
+                     WHERE card = :cardid AND cardside = 1 AND area = 3",
+                    array('cardid' => $wrong->cardid)
+                );
+                
+                $this->flashcardoptions[] = array(
+                    'answer' => $wrongtext,
+                    'iscorrect' => 0,
+                    'context' => $wrongcontext ? format_text($wrongcontext) : ''
+                );
+                $addedanswers[] = $wrongtext;
+                $wrongcount++;
+            }
+        }
+        
+        // If still not enough, add generic placeholders
+        while ($wrongcount < 5) {
+            $genericwrong = $this->generate_generic_wrong_answer($correctanswer, $wrongcount);
+            if ($genericwrong && !in_array($genericwrong, $addedanswers)) {
+                $this->flashcardoptions[] = array(
+                    'answer' => $genericwrong,
+                    'iscorrect' => 0,
+                    'context' => ''
+                );
+                $addedanswers[] = $genericwrong;
+                $wrongcount++;
+            } else {
+                break;
+            }
+        }
+        
+        // Shuffle the options so correct answer is not always first
+        shuffle($this->flashcardoptions);
+    }
+    
+    /**
+     * Generate a generic wrong answer when not enough real ones available
+     * @param string $correctanswer
+     * @param int $index
+     * @return string|null
+     */
+    private function generate_generic_wrong_answer($correctanswer, $index) {
+        // This is a fallback - in practice, there should usually be enough cards
+        // Generic options based on common patterns
+        $generic = array(
+            get_string('option_placeholder_1', 'cardbox'),
+            get_string('option_placeholder_2', 'cardbox'),
+            get_string('option_placeholder_3', 'cardbox'),
+            get_string('option_placeholder_4', 'cardbox'),
+            get_string('option_placeholder_5', 'cardbox'),
+        );
+        
+        if (isset($generic[$index])) {
+            return $generic[$index];
+        }
+        
+        return null;
+    }
+    
     public function cardbox_getcarddeck(int $cardid) {
         global $CFG, $DB, $USER;
         if ($DB->record_exists('cardbox_progress', ['userid' => $USER->id, 'card' => $cardid])) {
@@ -218,7 +366,10 @@ class cardbox_practice implements \renderable, \templatable {
         $data['case3'] = $this->case3;
         $data['case4'] = $this->case4;
         $data['case5'] = $this->case5;
+        $data['case6'] = $this->case6;
+        $data['case7'] = $this->case7;
         $data['inputfields'] = $this->inputfields;
+        $data['flashcardoptions'] = $this->flashcardoptions;
         $data['contextquestion'] = $this->questioncontext;
         $data['contextanswer'] = $this->answercontext;
         $data['necessaryanswers'] = $this->necessaryanswers;

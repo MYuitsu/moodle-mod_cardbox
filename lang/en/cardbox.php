@@ -167,6 +167,7 @@ $string['titleforchoosesettings'] = 'Practice options';
 $string['choosecorrectionmode'] = 'Practice mode';
 $string['selfcorrection'] = 'Check yourself';
 $string['autocorrection'] = 'Automatic check';
+$string['flashcardmode'] = 'Flashcard mode';
 $string['weightopic'] = 'Focus';
 $string['notopicpreferred'] = 'no preference';
 $string['practiceall'] = 'Practice all cards';
@@ -196,6 +197,11 @@ $string['suggestanswer_label'] = 'Please suggest a new solution';
 $string['suggestanswer'] = 'Suggest answer';
 $string['suggestanswer_send'] = 'Send answer';
 $string['cardsleft'] = 'Remaining cards:';
+$string['nextcard'] = 'Next Card';
+$string['correct'] = 'Correct!';
+$string['incorrect'] = 'Incorrect';
+$string['correctanswer'] = 'Correct Answer';
+$string['explanation'] = 'Explanation';
 
 $string['solution'] = 'Solution';
 $string['yoursolution'] = 'Your answer';
@@ -341,3 +347,13 @@ $string['event:card_deleted'] = 'Card deleted';
 $string['event:card_updated'] = 'Card updated';
 $string['event:practice_session_ended'] = 'Practice session ended';
 $string['event:practice_session_started'] = 'Practice session started';
+
+// Flashcard mode - 9 option placeholders
+$string['option_placeholder_1'] = 'Option A';
+$string['option_placeholder_2'] = 'Option B';
+$string['option_placeholder_3'] = 'Option C';
+$string['option_placeholder_4'] = 'Option D';
+$string['option_placeholder_5'] = 'Option E';
+$string['option_placeholder_6'] = 'Option F';
+$string['option_placeholder_7'] = 'Option G';
+$string['option_placeholder_8'] = 'Option H';

@@ -25,10 +25,13 @@ const Ques_Autocheck = 2;
 const Ans_Selfcheck  = 3;
 const Ans_Autocheck  = 4;
 const Suggest_Ans    = 5;
+const Ques_Flashcard = 6;
+const Ans_Flashcard  = 7;
 const EnableAutocorrect   = 0;
 const Disable_Autocorrect = 1;
 const Case_Autocheck = 2;
 const Case_SelfCheck = 1;
+const Case_Flashcard = 3;
 /**
  * This script controlls the behaviour of the page during practice.
  *
@@ -58,6 +61,8 @@ function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disable
         var acval = eventhandling.controller.acvals.filter(checkacvalue, eventhandling.controller.cardId);
         if (__case == Case_SelfCheck) {
             var quescase = Ques_Selfcheck;
+        } else if (__case == Case_Flashcard) {
+            var quescase = Ques_Flashcard;
         } else {
             if (acval.length == 1) {
                 var disableautocorrect = acval[0].split('_')[1];
@@ -79,6 +84,8 @@ function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disable
 
         if (quescase == Ques_Autocheck) {
             eventhandling.registerEventsForQuestionAutoCheck();
+        } else if (quescase == Ques_Flashcard) {
+            eventhandling.registerEventsForQuestionFlashcard();
         } else {
             eventhandling.registerEventsForQuestionSelfCheck();
         }
@@ -142,7 +149,10 @@ class EventHandling {
      */
     registerEventsForQuestionAutoCheck() {
 
-        document.getElementById('cardbox-userinput-1').focus();
+        var inputElement = document.getElementById('cardbox-userinput-1');
+        if (inputElement) {
+            inputElement.focus();
+        }
 
         document.getElementById('cardbox-submit-answer').addEventListener('click', function(e) {
 
@@ -172,6 +182,148 @@ class EventHandling {
             // Notify controller of this click event.
             this.controller.reactTo('end-practice');
 
+        }.bind(this));
+
+    }
+    /**
+     * Register events for Flashcard mode - question view
+     * @returns {undefined}
+     */
+    registerEventsForQuestionFlashcard() {
+
+        var optionButtons = document.querySelectorAll('.cardbox-flashcard-option-btn');
+        var revealArea = document.getElementById('cardbox-flashcard-reveal-area');
+        var resultMessage = document.getElementById('cardbox-flashcard-result-message');
+        var correctAnswerText = document.getElementById('cardbox-correct-answer-text');
+        var answerContextContent = document.getElementById('cardbox-answer-context-content');
+        var answerContextBox = document.getElementById('cardbox-flashcard-answer-context');
+        var nextContainer = document.getElementById('cardbox-flashcard-next-container');
+        var nextButton = document.getElementById('cardbox-flashcard-next-btn');
+        
+        optionButtons.forEach(function(button) {
+            button.addEventListener('click', function(e) {
+                // Prevent page reload and multiple clicks
+                e.preventDefault();
+                
+                console.log('Flashcard option clicked');
+                
+                // Disable all buttons after click
+                optionButtons.forEach(function(btn) {
+                    btn.disabled = true;
+                });
+                
+                // Get the selected answer
+                var selectedAnswer = button.dataset.answer;
+                var isCorrect = button.dataset.iscorrect === '1';
+                
+                console.log('Selected answer:', selectedAnswer, 'Is correct:', isCorrect);
+                
+                // Find the correct answer and its context
+                var correctAnswer = '';
+                var correctContext = '';
+                optionButtons.forEach(function(btn) {
+                    if (btn.dataset.iscorrect === '1') {
+                        correctAnswer = btn.dataset.answer;
+                        correctContext = btn.dataset.context || '';
+                    }
+                });
+                
+                // Add visual feedback on selected button
+                if (isCorrect) {
+                    // Correct answer - green border with animation
+                    button.classList.add('cardbox-flashcard-option-correct');
+                    resultMessage.innerHTML = '<span class="cardbox-result-icon">✓</span> Chính xác! Bạn đã chọn đúng đáp án.';
+                    resultMessage.classList.add('correct');
+                    resultMessage.classList.remove('incorrect');
+                } else {
+                    // Wrong answer - red border
+                    button.classList.add('cardbox-flashcard-option-incorrect');
+                    resultMessage.innerHTML = '<span class="cardbox-result-icon">✗</span> Chưa đúng. Hãy xem đáp án đúng bên dưới:';
+                    resultMessage.classList.add('incorrect');
+                    resultMessage.classList.remove('correct');
+                    
+                    // Highlight the correct answer with green border
+                    optionButtons.forEach(function(btn) {
+                        if (btn.dataset.iscorrect === '1') {
+                            btn.classList.add('cardbox-flashcard-option-correct');
+                        }
+                    });
+                }
+                
+                // Display correct answer prominently
+                correctAnswerText.innerHTML = '<div class="cardbox-answer-highlight">' + correctAnswer + '</div>';
+                
+                // Display context/explanation if available
+                if (correctContext && correctContext.trim() !== '') {
+                    answerContextContent.innerHTML = correctContext;
+                    answerContextBox.style.display = 'flex';
+                } else {
+                    answerContextBox.style.display = 'none';
+                }
+                
+                // Show reveal area with animation
+                revealArea.classList.remove('hidden');
+                revealArea.classList.add('cardbox-reveal-animation');
+                
+                // Show next button
+                nextContainer.classList.remove('hidden');
+                
+                // Store the result in controller's evaluate object
+                if (!this.controller.evaluate.flashcardAnswer) {
+                    this.controller.evaluate.flashcardAnswer = {};
+                }
+                this.controller.evaluate.flashcardAnswer.selectedAnswer = selectedAnswer;
+                this.controller.evaluate.flashcardAnswer.isCorrect = isCorrect;
+                
+                console.log('Stored in evaluate:', this.controller.evaluate.flashcardAnswer);
+                
+            }.bind(this));
+        }.bind(this));
+        
+        // Next button click handler
+        if (nextButton) {
+            nextButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Next button clicked - calling reactTo flashcard-answer-selected');
+                this.controller.reactTo('flashcard-answer-selected');
+            }.bind(this));
+        }
+
+        document.getElementById('cardbox-end-session').addEventListener('click', function(e) {
+            // Prevent page reload.
+            e.preventDefault();
+            // Notify controller of this click event.
+            this.controller.reactTo('end-practice');
+        }.bind(this));
+
+    }
+    /**
+     * Register events for Flashcard mode - answer view
+     * @returns {undefined}
+     */
+    registerEventsForAnswerFlashcard() {
+
+        document.getElementById('cardbox-flashcard-next').addEventListener('click', function(e) {
+            // Prevent page reload.
+            e.preventDefault();
+            
+            // Get the stored result
+            var isCorrect = this.controller.evaluate.flashcardAnswer.isCorrect;
+            
+            // Notify controller to proceed to next card
+            if (isCorrect) {
+                this.controller.reactTo('mark-as-correct');
+            } else {
+                this.controller.reactTo('mark-as-incorrect');
+            }
+            
+        }.bind(this));
+
+        document.getElementById('cardbox-end-session').addEventListener('click', function(e) {
+            // Prevent page reload.
+            e.preventDefault();
+            // Notify controller of this click event.
+            this.controller.reactTo('end-practice');
         }.bind(this));
 
     }
@@ -362,6 +514,11 @@ class Coordinate {
                     this.evaluate.registerUnknownAnswer(this.data);
                     // 2. Render the solution and give feedback.
                     this.output.renderAnswer(this.evaluate, this.eventhandling);
+                    break;
+                
+                case 'flashcard-answer-selected':
+                    // For flashcard mode - show answer with explanation
+                    this.output.renderFlashcardAnswer(this.evaluate, this.eventhandling, this.data);
                     break;
                 
                 // II. answer-view events for updating the card data and getting a new card.
@@ -889,6 +1046,8 @@ class Output {
                                         } else {
                                             eventhandling.registerEventsForQuestionAutoCheck();
                                         }
+                                    } else if (eventhandling.controller.case == Case_Flashcard) {
+                                        eventhandling.registerEventsForQuestionFlashcard();
                                     } else {
                                         eventhandling.registerEventsForQuestionSelfCheck();
                                     }
@@ -926,6 +1085,44 @@ class Output {
                             });// Add a catch.
         })(this.templates, data);
 
+    }
+    
+    /**
+     * Render flashcard answer with explanation
+     * @param {type} evaluate
+     * @param {type} eventhandling
+     * @param {type} data
+     * @returns {undefined}
+     */
+    renderFlashcardAnswer(evaluate, eventhandling, data) {
+        
+        var newdata = JSON.parse(JSON.stringify(data));
+        
+        // Set the correct case flags
+        newdata['case'.concat(Ques_Flashcard)] = false;
+        newdata['case'.concat(Ans_Flashcard)] = true;
+        
+        // Add the result of the user's selection
+        if (evaluate.flashcardAnswer && typeof evaluate.flashcardAnswer.isCorrect !== 'undefined') {
+            newdata['iscorrect'] = evaluate.flashcardAnswer.isCorrect;
+        } else {
+            // Fallback in case flashcardAnswer is not set
+            newdata['iscorrect'] = false;
+        }
+        
+        (function (templates, data) {
+            templates.render('mod_cardbox/practice', data)
+                .then(function (html, js) {
+                    templates.replaceNodeContents('#cardbox-practice', html, js);
+                })
+                .then(function () {
+                    // Register event listeners for the answer view
+                    eventhandling.registerEventsForAnswerFlashcard();
+                })
+                .catch(function(error) {
+                    console.error('Error rendering flashcard answer:', error);
+                });
+        })(this.templates, newdata);
     }
     
 
