@@ -110,7 +110,7 @@ class mod_cardbox_card_form extends moodleform {
         $label = get_string('imgdescriptionnecessary_label', 'cardbox');
         $imagedescriptionarray = array();
         $imagedescriptionarray[] =& $mform->createElement('checkbox', 'imgdescriptionnecessary', '');
-        $imagedescriptionarray[] =& $mform->createElement('html', "<p style='margin: 1rem'>$label</p>");
+        $imagedescriptionarray[] =& $mform->createElement('html', "<p style='margin: 0.8rem !important'>$label</p>");
         $mform->addGroup($imagedescriptionarray, 'imgdescriptionar', '', array(' '), false);
 
         $audiooptions = array();
@@ -135,7 +135,7 @@ class mod_cardbox_card_form extends moodleform {
             $mform->setType("answer$i", PARAM_RAW);
             if ($i === 1) {
                 $mform->addElement('html',
-                "<div class='form-group row fitem' style='margin-bottom: 1.5rem;'>
+                "<div class='form-group row fitem' style='margin-bottom: 0.8rem !important;'>
                 <div class='col-md-3 col-form-label d-flex pb-0 pr-md-0'></div>
                 <div class='col-md-9 form-inline align-items-start felement'>
                 <div style='background-color: #CD1076; color: white; padding: 5px; width: 100%; padding-left: 10px'>".

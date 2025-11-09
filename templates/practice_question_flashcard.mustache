@@ -29,10 +29,18 @@
                 </div>
                 {{#contextquestionavailable}}
                     <div class="cardbox-flashcard-question-context">
-                        <div class="cardbox-context-icon">💡</div>
                         <div class="cardbox-context-content">{{{contextquestion}}}</div>
                     </div>
                 {{/contextquestionavailable}}
+                
+                <!-- Answer reveal area (hidden initially, shown after clicking option) -->
+                <div id="cardbox-flashcard-reveal-area">
+                    <!-- Correct answer with context in one box -->
+                    <div id="cardbox-flashcard-correct-answer" class="cardbox-flashcard-correct-answer-box">
+                        <div id="cardbox-correct-answer-text" class="cardbox-correct-answer-text"></div>
+                        <div id="cardbox-answer-context-content" class="cardbox-explanation-content"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -50,26 +58,6 @@
                     {{answer}}
                 </button>
             {{/flashcardoptions}}
-        </div>
-        
-        <!-- Answer reveal area (hidden initially) -->
-        <div id="cardbox-flashcard-reveal-area" class="cardbox-flashcard-reveal-area hidden">
-            <!-- Result message -->
-            <div id="cardbox-flashcard-result-message" class="cardbox-flashcard-result-message"></div>
-            
-            <!-- Correct answer display -->
-            <div id="cardbox-flashcard-correct-answer" class="cardbox-flashcard-correct-answer-box">
-                <div class="cardbox-correct-answer-label">
-                    <strong>{{# str }} correctanswer, cardbox {{/ str }}:</strong>
-                </div>
-                <div id="cardbox-correct-answer-text" class="cardbox-correct-answer-text"></div>
-            </div>
-            
-            <!-- Answer context/explanation -->
-            <div id="cardbox-flashcard-answer-context" class="cardbox-flashcard-answer-explanation">
-                <div class="cardbox-explanation-icon">📚</div>
-                <div id="cardbox-answer-context-content" class="cardbox-explanation-content"></div>
-            </div>
         </div>
         
         <!-- Next button (hidden initially) -->

@@ -48,6 +48,12 @@ function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disable
     require(['jquery', 'core/templates', 'core/notification', 'core/chartjs'], function ($, templates, notification, chart) {
         
         /*********** 1. Variables and Calls ***********/
+        
+        console.log('=== START PRACTICE ===');
+        console.log('__case:', __case);
+        console.log('Case_Flashcard constant:', Case_Flashcard);
+        console.log('Case_Autocheck constant:', Case_Autocheck);
+        console.log('Case_SelfCheck constant:', Case_SelfCheck);
 
         removeNotifications();
 
@@ -58,6 +64,12 @@ function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disable
         var coordinate = new Coordinate(__cmid, evaluate, output, statistics, __selection, __data, __case, __mode, __disableacvals);
         var eventhandling = new EventHandling(coordinate);
         coordinate.addEventHandler(eventhandling);
+        
+        // FORCE FLASHCARD MODE - Always use flashcard
+        var quescase = Ques_Flashcard;
+        console.log('FORCED quescase to Flashcard mode:', quescase);
+        
+        /*
         var acval = eventhandling.controller.acvals.filter(checkacvalue, eventhandling.controller.cardId);
         if (__case == Case_SelfCheck) {
             var quescase = Ques_Selfcheck;
@@ -74,6 +86,9 @@ function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disable
             }
         }
         
+        console.log('Determined quescase:', quescase);
+        console.log('Ques_Flashcard constant:', Ques_Flashcard);
+        
         function checkacvalue(acval) {
             if (acval.split('_')[0] == this) {
                 var val_arr = acval.split('_');
@@ -81,12 +96,16 @@ function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disable
             }
 
         }
+        */
 
         if (quescase == Ques_Autocheck) {
+            console.log('Registering AutoCheck events');
             eventhandling.registerEventsForQuestionAutoCheck();
         } else if (quescase == Ques_Flashcard) {
+            console.log('Registering Flashcard events - FORCED MODE');
             eventhandling.registerEventsForQuestionFlashcard();
         } else {
+            console.log('Registering SelfCheck events');
             eventhandling.registerEventsForQuestionSelfCheck();
         }
 
@@ -154,35 +173,35 @@ class EventHandling {
             inputElement.focus();
         }
 
-        document.getElementById('cardbox-submit-answer').addEventListener('click', function(e) {
+        var submitButton = document.getElementById('cardbox-submit-answer');
+        if (submitButton) {
+            submitButton.addEventListener('click', function(e) {
+                // Prevent page reload.
+                e.preventDefault();
+                // Notify controller of this click event.
+                this.controller.reactTo('submit-answer');
+            }.bind(this));
+        }
 
-            // Prevent page reload.
-            e.preventDefault();
+        var doNotKnowButton = document.getElementById('cardbox-do-not-know');
+        if (doNotKnowButton) {
+            doNotKnowButton.addEventListener('click', function(e) {
+                // Prevent page reload.
+                e.preventDefault();
+                // Notify controller of this click event.
+                this.controller.reactTo('do-not-know');
+            }.bind(this));
+        }
 
-            // Notify controller of this click event.
-            this.controller.reactTo('submit-answer');
-
-        }.bind(this));
-
-        document.getElementById('cardbox-do-not-know').addEventListener('click', function(e) {
-
-            // Prevent page reload.
-            e.preventDefault();
-
-            // Notify controller of this click event.
-            this.controller.reactTo('do-not-know');
-
-        }.bind(this));
-
-        document.getElementById('cardbox-end-session').addEventListener('click', function(e) {
-
-            // Prevent page reload.
-            e.preventDefault();
-
-            // Notify controller of this click event.
-            this.controller.reactTo('end-practice');
-
-        }.bind(this));
+        var endSessionButton = document.getElementById('cardbox-end-session');
+        if (endSessionButton) {
+            endSessionButton.addEventListener('click', function(e) {
+                // Prevent page reload.
+                e.preventDefault();
+                // Notify controller of this click event.
+                this.controller.reactTo('end-practice');
+            }.bind(this));
+        }
 
     }
     /**
@@ -191,6 +210,8 @@ class EventHandling {
      */
     registerEventsForQuestionFlashcard() {
 
+        console.log('=== registerEventsForQuestionFlashcard CALLED ===');
+        
         var optionButtons = document.querySelectorAll('.cardbox-flashcard-option-btn');
         var revealArea = document.getElementById('cardbox-flashcard-reveal-area');
         var resultMessage = document.getElementById('cardbox-flashcard-result-message');
@@ -200,93 +221,155 @@ class EventHandling {
         var nextContainer = document.getElementById('cardbox-flashcard-next-container');
         var nextButton = document.getElementById('cardbox-flashcard-next-btn');
         
-        optionButtons.forEach(function(button) {
-            button.addEventListener('click', function(e) {
-                // Prevent page reload and multiple clicks
-                e.preventDefault();
-                
-                console.log('Flashcard option clicked');
-                
-                // Disable all buttons after click
-                optionButtons.forEach(function(btn) {
-                    btn.disabled = true;
-                });
-                
-                // Get the selected answer
-                var selectedAnswer = button.dataset.answer;
-                var isCorrect = button.dataset.iscorrect === '1';
-                
-                console.log('Selected answer:', selectedAnswer, 'Is correct:', isCorrect);
-                
-                // Find the correct answer and its context
-                var correctAnswer = '';
-                var correctContext = '';
-                optionButtons.forEach(function(btn) {
-                    if (btn.dataset.iscorrect === '1') {
-                        correctAnswer = btn.dataset.answer;
-                        correctContext = btn.dataset.context || '';
-                    }
-                });
-                
-                // Add visual feedback on selected button
-                if (isCorrect) {
-                    // Correct answer - green border with animation
-                    button.classList.add('cardbox-flashcard-option-correct');
-                    resultMessage.innerHTML = '<span class="cardbox-result-icon">✓</span> Chính xác! Bạn đã chọn đúng đáp án.';
-                    resultMessage.classList.add('correct');
-                    resultMessage.classList.remove('incorrect');
-                } else {
-                    // Wrong answer - red border
-                    button.classList.add('cardbox-flashcard-option-incorrect');
-                    resultMessage.innerHTML = '<span class="cardbox-result-icon">✗</span> Chưa đúng. Hãy xem đáp án đúng bên dưới:';
-                    resultMessage.classList.add('incorrect');
-                    resultMessage.classList.remove('correct');
+        console.log('Found buttons:', optionButtons.length);
+        console.log('First button:', optionButtons[0]);
+        console.log('First button disabled?', optionButtons[0] ? optionButtons[0].disabled : 'N/A');
+        
+        // Store controller reference
+        var controller = this.controller;
+        
+        // Initialize flashcardAnswer object if not exists
+        if (!controller.evaluate.flashcardAnswer) {
+            controller.evaluate.flashcardAnswer = {};
+        }
+        
+        console.log('Flashcard event handler registered. Options count:', optionButtons.length);
+        console.log('Controller:', controller);
+        console.log('Evaluate object:', controller.evaluate);
+        
+        // Reset all buttons to enabled state (in case of new card)
+        for (var i = 0; i < optionButtons.length; i++) {
+            optionButtons[i].disabled = false;
+            optionButtons[i].classList.remove('cardbox-flashcard-option-correct');
+            optionButtons[i].classList.remove('cardbox-flashcard-option-incorrect');
+        }
+        
+        // Hide reveal area and next button for new card
+        if (revealArea) {
+            revealArea.classList.add('hidden');
+            revealArea.classList.remove('cardbox-reveal-animation');
+        }
+        if (nextContainer) {
+            nextContainer.classList.add('hidden');
+        }
+        
+        console.log('Buttons reset and ready for new card');
+        
+        // Use for loop instead of forEach for better compatibility
+        for (var i = 0; i < optionButtons.length; i++) {
+            var button = optionButtons[i];
+            console.log('Adding click listener to button:', button.dataset.answer);
+            
+            (function(btn) {
+                btn.addEventListener('click', function(e) {
+                    // Prevent page reload and multiple clicks
+                    e.preventDefault();
+                    e.stopPropagation();
                     
-                    // Highlight the correct answer with green border
-                    optionButtons.forEach(function(btn) {
-                        if (btn.dataset.iscorrect === '1') {
-                            btn.classList.add('cardbox-flashcard-option-correct');
+                    console.log('=== FLASHCARD OPTION CLICKED ===');
+                    console.log('Button:', btn);
+                    console.log('Event:', e);
+                    
+                    // Disable all buttons after click
+                    for (var j = 0; j < optionButtons.length; j++) {
+                        optionButtons[j].disabled = true;
+                    }
+                    
+                    // Get the selected answer
+                    var selectedAnswer = btn.dataset.answer;
+                    var isCorrect = btn.dataset.iscorrect === '1';
+                    
+                    console.log('Selected answer:', selectedAnswer, 'Is correct:', isCorrect);
+                    
+                    // Find the correct answer and its context
+                    var correctAnswer = '';
+                    var correctContext = '';
+                    for (var k = 0; k < optionButtons.length; k++) {
+                        if (optionButtons[k].dataset.iscorrect === '1') {
+                            correctAnswer = optionButtons[k].dataset.answer;
+                            correctContext = optionButtons[k].dataset.context || '';
+                            break;
                         }
-                    });
-                }
+                    }
+                    
+                    // Add visual feedback on selected button
+                    if (isCorrect) {
+                        // Correct answer - green border with checkmark in text
+                        btn.classList.add('cardbox-flashcard-option-correct');
+                        btn.innerHTML = '✓ ' + selectedAnswer;
+                    } else {
+                        // Wrong answer - red border with X
+                        btn.classList.add('cardbox-flashcard-option-incorrect');
+                        btn.innerHTML = '✗ ' + selectedAnswer;
+                        
+                        // Highlight the correct answer with green border and checkmark
+                        for (var m = 0; m < optionButtons.length; m++) {
+                            if (optionButtons[m].dataset.iscorrect === '1') {
+                                optionButtons[m].classList.add('cardbox-flashcard-option-correct');
+                                optionButtons[m].innerHTML = '✓ ' + optionButtons[m].dataset.answer;
+                            }
+                        }
+                    }
                 
-                // Display correct answer prominently
-                correctAnswerText.innerHTML = '<div class="cardbox-answer-highlight">' + correctAnswer + '</div>';
-                
-                // Display context/explanation if available
+                // Display correct answer and context together in one box
+                var answerHTML = '<div class="cardbox-answer-highlight">' + correctAnswer + '</div>';
                 if (correctContext && correctContext.trim() !== '') {
-                    answerContextContent.innerHTML = correctContext;
-                    answerContextBox.style.display = 'flex';
-                } else {
-                    answerContextBox.style.display = 'none';
+                    answerHTML += '<div class="cardbox-context-divider"></div>' + correctContext;
                 }
+                correctAnswerText.innerHTML = answerHTML;
+                
+                // Hide the separate context box since we merged it
+                // answerContextBox.style.display = 'none';
                 
                 // Show reveal area with animation
                 revealArea.classList.remove('hidden');
                 revealArea.classList.add('cardbox-reveal-animation');
                 
+                console.log('Reveal area displayed:', revealArea);
+                console.log('Reveal area classes:', revealArea.className);
+                console.log('Correct answer text:', correctAnswer);
+                console.log('Context:', correctContext);
+                
+                // Scroll to reveal area smoothly so user can see the answer
+                setTimeout(function() {
+                    revealArea.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest'
+                    });
+                }, 100);
+                
                 // Show next button
                 nextContainer.classList.remove('hidden');
                 
+                console.log('About to store result...');
+                console.log('Controller.evaluate:', controller.evaluate);
+                console.log('FlashcardAnswer object exists:', !!controller.evaluate.flashcardAnswer);
+                
                 // Store the result in controller's evaluate object
-                if (!this.controller.evaluate.flashcardAnswer) {
-                    this.controller.evaluate.flashcardAnswer = {};
-                }
-                this.controller.evaluate.flashcardAnswer.selectedAnswer = selectedAnswer;
-                this.controller.evaluate.flashcardAnswer.isCorrect = isCorrect;
+                controller.evaluate.flashcardAnswer.selectedAnswer = selectedAnswer;
+                controller.evaluate.flashcardAnswer.isCorrect = isCorrect;
                 
-                console.log('Stored in evaluate:', this.controller.evaluate.flashcardAnswer);
+                console.log('Stored in evaluate:', controller.evaluate.flashcardAnswer);
+                console.log('=== END FLASHCARD OPTION CLICK ===');
                 
-            }.bind(this));
-        }.bind(this));
+                });
+            })(button);
+        }
         
-        // Next button click handler
+        // Next button click handler - proceed directly without rendering answer view
         if (nextButton) {
             nextButton.addEventListener('click', function(e) {
                 e.preventDefault();
-                console.log('Next button clicked - calling reactTo flashcard-answer-selected');
-                this.controller.reactTo('flashcard-answer-selected');
-            }.bind(this));
+                console.log('Next button clicked - proceeding to next card');
+                
+                // Get the stored result and proceed
+                var isCorrect = controller.evaluate.flashcardAnswer.isCorrect;
+                if (isCorrect) {
+                    controller.reactTo('mark-as-correct');
+                } else {
+                    controller.reactTo('mark-as-incorrect');
+                }
+            });
         }
 
         document.getElementById('cardbox-end-session').addEventListener('click', function(e) {
@@ -1034,7 +1117,13 @@ class Output {
                             .then(function (html, js) {
                                 templates.replaceNodeContents('#cardbox-practice', html, js);
                             }).then(function () {
-                                    // Register event listeners for the newly rendered partial.
+                                    // FORCE FLASHCARD MODE - Always register flashcard events
+                                    console.log('Rendering new question - controller.case:', eventhandling.controller.case);
+                                    console.log('Forcing Flashcard event registration');
+                                    eventhandling.registerEventsForQuestionFlashcard();
+                                    
+                                    /*
+                                    // OLD CODE - detecting mode incorrectly
                                     if (eventhandling.controller.case == Case_Autocheck) { 
                                         var acval = eventhandling.controller.acvals.filter(checkacvalue, eventhandling.controller.cardId);   
                                         if (acval.length == 1) {
@@ -1051,6 +1140,7 @@ class Output {
                                     } else {
                                         eventhandling.registerEventsForQuestionSelfCheck();
                                     }
+                                    */
                                     function checkacvalue(acval) {
                                         if (acval.split('_')[0] == this) {
                                             var val_arr = acval.split('_');

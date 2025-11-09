@@ -220,6 +220,7 @@ class cardbox_practice implements \renderable, \templatable {
         global $DB;
         
         if (empty($this->answer['texts'])) {
+            error_log("=== FLASHCARD DEBUG: No answer texts found ===");
             return;
         }
         
@@ -227,6 +228,10 @@ class cardbox_practice implements \renderable, \templatable {
         $correctanswer = $this->answer['texts'][0]['puretext'];
         $correctanswer = strip_tags($correctanswer);
         $correctanswer = trim($correctanswer);
+        
+        error_log("=== FLASHCARD DEBUG START ===");
+        error_log("Card ID: " . $cardid);
+        error_log("Correct Answer: " . $correctanswer);
         
         // Add correct answer with context
         $this->flashcardoptions[] = array(
@@ -239,8 +244,10 @@ class cardbox_practice implements \renderable, \templatable {
         $currentcard = $DB->get_record('cardbox_cards', array('id' => $cardid), 'cardbox, topic');
         $topicid = $currentcard->topic;
         
+        error_log("Topic ID: " . $topicid);
+        
         // Get wrong answers from OTHER CARDS in the SAME topic (regardless of cardbox)
-        // Use ORDER BY id for better compatibility across different databases
+        // cardside = 1 (answer side), area = 0 (main content, not context)
         $sql = "SELECT DISTINCT cc.id as cardid, cct.id as contentid, cct.content
                 FROM {cardbox_cards} cc
                 JOIN {cardbox_cardcontents} cct ON cc.id = cct.card
@@ -248,18 +255,23 @@ class cardbox_practice implements \renderable, \templatable {
                 AND cc.id != :cardid
                 AND cc.approved = 1
                 AND cct.cardside = 1
-                AND cct.contenttype = 0
-                AND cct.area != 3";
+                AND cct.area = 0";
         
         $wronganswers = $DB->get_records_sql($sql, array(
             'topicid' => $topicid, 
             'cardid' => $cardid
         ));
         
+        error_log("Wrong answers from DB: " . count($wronganswers));
+        foreach ($wronganswers as $wa) {
+            error_log("  - Card " . $wa->cardid . ": " . substr($wa->content, 0, 50));
+        }
+        
         // Shuffle the results in PHP instead of SQL RAND()
         if (!empty($wronganswers)) {
             $wronganswers = array_values($wronganswers); // Reset array keys
             shuffle($wronganswers);
+            error_log("After shuffle: " . count($wronganswers) . " options");
         }
         
         $wrongcount = 0;
@@ -273,12 +285,14 @@ class cardbox_practice implements \renderable, \templatable {
             $wrongtext = strip_tags($wrong->content);
             $wrongtext = trim($wrongtext);
             
+            error_log("  Checking: " . $wrongtext);
+            
             // Make sure it's different from correct answer, not empty, and not duplicate
             if (!in_array($wrongtext, $addedanswers) && !empty($wrongtext) && strlen($wrongtext) > 0) {
-                // Get context for this wrong answer
+                // Get context for this wrong answer (area = 1 for context)
                 $wrongcontext = $DB->get_field_sql(
                     "SELECT content FROM {cardbox_cardcontents} 
-                     WHERE card = :cardid AND cardside = 1 AND area = 3",
+                     WHERE card = :cardid AND cardside = 1 AND area = 1",
                     array('cardid' => $wrong->cardid)
                 );
                 
@@ -289,8 +303,13 @@ class cardbox_practice implements \renderable, \templatable {
                 );
                 $addedanswers[] = $wrongtext;
                 $wrongcount++;
+                error_log("  ✓ Added: " . $wrongtext . " (count: $wrongcount)");
+            } else {
+                error_log("  ✗ Skipped: duplicate or empty");
             }
         }
+        
+        error_log("Total wrong answers added: " . $wrongcount);
         
         // If still not enough, add generic placeholders
         while ($wrongcount < 5) {
@@ -303,10 +322,14 @@ class cardbox_practice implements \renderable, \templatable {
                 );
                 $addedanswers[] = $genericwrong;
                 $wrongcount++;
+                error_log("  + Added placeholder: " . $genericwrong);
             } else {
                 break;
             }
         }
+        
+        error_log("Final options count: " . count($this->flashcardoptions));
+        error_log("=== FLASHCARD DEBUG END ===");
         
         // Shuffle the options so correct answer is not always first
         shuffle($this->flashcardoptions);
