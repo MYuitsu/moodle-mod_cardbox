@@ -4,9 +4,9 @@
     <div id="cardbox-cardcontainer" class="col-xs-12 col-md-10 col-lg-8 col-xl-6" style="margin-bottom: 10px">
         <button id="cardbox-end-session" type="button" class="btn btn-secondary">{{topic}} {{# str }} endpractice, cardbox {{/ str }}</button>
     </div>
-    <div class="hidden-xs col-md-1 col-lg-2 col-xl-3"></div>\
     <div class="hidden-xs col-md-1 col-lg-2 col-xl-3"></div>
-    <div id="cardbox-flashcard-container" class="col-xs-12 col-md-10 col-lg-8 col-xl-6">
+    <div class="hidden-xs hidden-md col-lg-2 col-xl-3"></div>
+    <div id="cardbox-flashcard-container" class="col-xs-12 col-md-12 col-lg-8 col-xl-6">
         <div class="cardbox-flashcard-card {{#iscorrect}}cardbox-flashcard-correct{{/iscorrect}}{{^iscorrect}}cardbox-flashcard-incorrect{{/iscorrect}}">
             <div class="cardbox-flashcard-header">
                 {{#deck}}
@@ -55,7 +55,7 @@
             </div>
         </div>
     </div>
-    <div class="hidden-xs col-md-1 col-lg-2 col-xl-3"></div>
+    <div class="hidden-xs hidden-md col-lg-2 col-xl-3"></div>
 
 </div>
 
