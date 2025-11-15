@@ -99,9 +99,8 @@ class cardbox_card_selection_algorithm implements cardbox_card_selection_interfa
             usort($priorityqueue, array('cardbox_card_selection_algorithm', 'cardbox_compare_cards_1st_level'));
         }
 
-        // 3. Pick the first 21 cards from the queue.
-        for ($i = 0; ( ($i < count($priorityqueue)) && ($i < 21)); $i++) {
-            $card = $priorityqueue[$i];
+        // 3. Pick all cards from the queue.
+        foreach ($priorityqueue as $card) {
             $selection[] = $card;
         }
 
