@@ -329,6 +329,7 @@ $string['status'] = 'trạng thái';
 $string['continue'] = 'Tiếp tục';
 $string['unmatchedanswers'] = 'Tệp CSV yêu cầu {$a->csvschema} câu trả lời; chỉ có {$a->actual} được đưa ra.';
 $string['emptyimportfile'] = 'Không có gì để nhập - tệp CSV không có hàng nào.';
+$string['previous'] = 'Lùi lại';
 
 // Capabilities definitions.
 $string['cardbox:approvecard'] = 'Phê duyệt thẻ';

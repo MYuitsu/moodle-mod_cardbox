@@ -329,6 +329,7 @@ $string['status'] = 'status';
 $string['continue'] = 'Continue';
 $string['unmatchedanswers'] = 'CSV file requires {$a->csvschema} answers; only {$a->actual} given.';
 $string['emptyimportfile'] = 'Nothing to import - CSV file has no rows.';
+$string['previous'] = 'Previous';
 
 // Capabilities definitions.
 $string['cardbox:approvecard'] = 'Approve card';

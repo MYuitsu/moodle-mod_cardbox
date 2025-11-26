@@ -220,6 +220,7 @@ class EventHandling {
         var answerContextBox = document.getElementById('cardbox-flashcard-answer-context');
         var nextContainer = document.getElementById('cardbox-flashcard-next-container');
         var nextButton = document.getElementById('cardbox-flashcard-next-btn');
+        var previousButton = document.getElementById('cardbox-flashcard-previous-btn');
         
         console.log('Found buttons:', optionButtons.length);
         console.log('First button:', optionButtons[0]);
@@ -251,6 +252,15 @@ class EventHandling {
         }
         if (nextContainer) {
             nextContainer.classList.add('hidden');
+        }
+        
+        // Hide/show previous button based on history
+        if (previousButton) {
+            if (controller.cardHistory.length === 0) {
+                previousButton.style.display = 'none';
+            } else {
+                previousButton.style.display = 'inline-block';
+            }
         }
         
         console.log('Buttons reset and ready for new card');
@@ -369,6 +379,33 @@ class EventHandling {
                 } else {
                     controller.reactTo('mark-as-incorrect');
                 }
+            });
+        }
+        
+        // Previous button click handler - go back to previous card
+        if (previousButton) {
+            previousButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Previous button clicked - going back to previous card');
+                
+                // Check if there is history
+                if (controller.cardHistory.length === 0) {
+                    console.log('No card history available');
+                    return;
+                }
+                
+                // Pop the last card from history
+                var previousCardState = controller.cardHistory.pop();
+                
+                // Restore the previous card state
+                controller.cardId = previousCardState.cardId;
+                controller.position = previousCardState.position;
+                controller.data = previousCardState.data;
+                controller.isrepetition = previousCardState.isrepetition;
+                controller.cardsleft = previousCardState.cardsleft;
+                
+                // Re-render the previous card
+                controller.output.renderNewQuestion(controller.eventhandling, previousCardState.data);
             });
         }
 
@@ -560,6 +597,9 @@ class Coordinate {
             // Collection of cards that were answered wrongly. They will be repeated until answered correctly once.
             // Their status in the database won't change, however, i.e. they go back to the first box.
             this.toRepeat = [];
+            
+            // History tracking for Previous button functionality
+            this.cardHistory = [];
             
             this.evaluate = evaluate;
             this.output = output;
@@ -770,6 +810,15 @@ class Coordinate {
                 this.statistics.finishPractice(this.cmid);
 
             } else {
+                // Save current card state to history before moving to next card
+                this.cardHistory.push({
+                    cardId: this.cardId,
+                    position: this.position,
+                    data: JSON.parse(JSON.stringify(this.data)), // Deep copy
+                    isrepetition: this.isrepetition,
+                    cardsleft: this.cardsleft
+                });
+                
                 this.data = newdata;
                 this.isrepetition = this.willBeRepetition;
                 if (this.isrepetition === 0) {
