@@ -313,6 +313,22 @@ $string['notopics'] = 'there are no topics yet';
 $string['nulltopic'] = 'Not Assigned';
 
 
+// AI features.
+$string['ai_hint'] = 'AI gợi ý';
+$string['ai_hint_image'] = 'AI gợi ý bằng hình';
+$string['ai_explain'] = 'AI Explain';
+$string['ai_hint_tooltip'] = 'Get a text hint from AI without revealing the answer';
+$string['ai_hint_image_tooltip'] = 'Get a visual hint image from AI without revealing the answer';
+$string['ai_explain_tooltip'] = 'Ask AI to explain why this is the correct answer';
+$string['ai_loading'] = 'AI is thinking...';
+$string['ai_loading_image'] = 'AI is generating an image...';
+$string['ai_error'] = 'AI is not available at the moment. Please try again later.';
+$string['ai_error_noprovider'] = 'No AI provider is configured. Please contact your administrator.';
+$string['ai_hint_prompt'] = 'You are a learning assistant. A student is studying flashcards. Give a brief hint to help them answer the following question WITHOUT revealing the answer directly. Question: {$a->question}';
+$string['ai_hint_image_prompt'] = 'Create a simple visual hint image that helps a student recall the answer to this flashcard question without directly showing the answer text. Question: {$a->question}';
+$string['ai_explain_prompt'] = 'You are a learning assistant. A student answered a flashcard question incorrectly. Briefly explain why the correct answer is right and why their answer was wrong. Question: {$a->question} | Correct answer: {$a->correctanswer} | Student\'s answer: {$a->studentanswer}';
+$string['cardbox:useai'] = 'Use AI features during practice';
+
 // Settings.
 $string['statistics_heading'] = 'Statistics';
 $string['weekly_users_practice_threshold'] = 'Threshold practicers per week';

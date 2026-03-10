@@ -340,6 +340,66 @@ class EventHandling {
                 console.log('Correct answer text:', correctAnswer);
                 console.log('Context:', correctContext);
                 
+                // Show AI Explain button if answer was wrong
+                if (!isCorrect) {
+                    var explainContainer = document.getElementById('cardbox-ai-explain-container');
+                    var explainBtn = document.getElementById('cardbox-ai-explain-btn');
+                    var explainResult = document.getElementById('cardbox-ai-explain-result');
+                    var explainContent = document.getElementById('cardbox-ai-explain-content');
+                    if (explainContainer) {
+                        explainContainer.classList.remove('hidden');
+                    }
+                    if (explainBtn) {
+                        explainBtn.disabled = false;
+                        explainBtn.addEventListener('click', function(ev) {
+                            ev.preventDefault();
+                            explainBtn.disabled = true;
+                            explainResult.classList.remove('hidden');
+                            explainContent.innerHTML = '<i class="fa fa-spinner fa-spin"></i> ' + M.util.get_string('ai_loading', 'cardbox');
+
+                            var questionText = '';
+                            if (controller.data && controller.data.question && controller.data.question.texts) {
+                                for (var t = 0; t < controller.data.question.texts.length; t++) {
+                                    if (controller.data.question.texts[t].puretext) {
+                                        questionText += controller.data.question.texts[t].puretext + ' ';
+                                    }
+                                }
+                            }
+                            questionText = questionText.replace(/<[^>]*>/g, '').trim();
+
+                            require(['jquery'], function($) {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: 'action.php',
+                                    data: {
+                                        id: controller.cmid,
+                                        action: 'aiexplain',
+                                        questiontext: questionText,
+                                        correctanswer: correctAnswer,
+                                        studentanswer: selectedAnswer,
+                                        sesskey: M.cfg.sesskey
+                                    }
+                                }).then(function(data) {
+                                    var result = JSON.parse(data);
+                                    if (result.status === 'success') {
+                                        explainContent.innerHTML = result.content;
+                                    } else {
+                                        explainContent.innerHTML = result.reason || M.util.get_string('ai_error', 'cardbox');
+                                    }
+                                }).fail(function() {
+                                    explainContent.innerHTML = M.util.get_string('ai_error', 'cardbox');
+                                });
+                            });
+                        });
+                    }
+                }
+                
+                // Hide AI Hint button after answering
+                var hintContainer = document.getElementById('cardbox-ai-hint-container');
+                if (hintContainer) {
+                    hintContainer.classList.add('hidden');
+                }
+                
                 // Scroll to reveal area smoothly so user can see the answer
                 setTimeout(function() {
                     revealArea.scrollIntoView({ 
@@ -408,6 +468,100 @@ class EventHandling {
                 controller.output.renderNewQuestion(controller.eventhandling, previousCardState.data);
             });
         }
+
+        // Helper: extract question text from card data
+        function getQuestionText() {
+            var questionText = '';
+            if (controller.data && controller.data.question && controller.data.question.texts) {
+                for (var t = 0; t < controller.data.question.texts.length; t++) {
+                    if (controller.data.question.texts[t].puretext) {
+                        questionText += controller.data.question.texts[t].puretext + ' ';
+                    }
+                }
+            }
+            return questionText.replace(/<[^>]*>/g, '').trim();
+        }
+
+        // AI Hint (text) button click handler
+        var aiHintBtn = document.getElementById('cardbox-ai-hint-btn');
+        var aiHintResult = document.getElementById('cardbox-ai-hint-result');
+        var aiHintContent = document.getElementById('cardbox-ai-hint-content');
+        if (aiHintBtn && aiHintResult && aiHintContent) {
+            aiHintBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                aiHintBtn.disabled = true;
+                aiHintResult.classList.remove('hidden');
+                aiHintContent.innerHTML = '<i class="fa fa-spinner fa-spin"></i> ' + M.util.get_string('ai_loading', 'cardbox');
+
+                require(['jquery'], function($) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'action.php',
+                        data: {
+                            id: controller.cmid,
+                            action: 'aihint',
+                            questiontext: getQuestionText(),
+                            sesskey: M.cfg.sesskey
+                        }
+                    }).then(function(data) {
+                        var result = JSON.parse(data);
+                        if (result.status === 'success') {
+                            aiHintContent.innerHTML = result.content;
+                        } else {
+                            aiHintContent.innerHTML = result.reason || M.util.get_string('ai_error', 'cardbox');
+                        }
+                    }).fail(function() {
+                        aiHintContent.innerHTML = M.util.get_string('ai_error', 'cardbox');
+                    });
+                });
+            });
+        }
+
+        // AI Hint (image) button click handler
+        var aiHintImageBtn = document.getElementById('cardbox-ai-hint-image-btn');
+        var aiHintImageResult = document.getElementById('cardbox-ai-hint-image-result');
+        var aiHintImageContent = document.getElementById('cardbox-ai-hint-image-content');
+        if (aiHintImageBtn && aiHintImageResult && aiHintImageContent) {
+            aiHintImageBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                aiHintImageBtn.disabled = true;
+                aiHintImageResult.classList.remove('hidden');
+                aiHintImageContent.innerHTML = '<i class="fa fa-spinner fa-spin"></i> ' + M.util.get_string('ai_loading_image', 'cardbox');
+
+                require(['jquery'], function($) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'action.php',
+                        data: {
+                            id: controller.cmid,
+                            action: 'aihintimage',
+                            questiontext: getQuestionText(),
+                            sesskey: M.cfg.sesskey
+                        }
+                    }).then(function(data) {
+                        var result = JSON.parse(data);
+                        if (result.status === 'success' && result.imageurl) {
+                            var img = document.createElement('img');
+                            img.src = result.imageurl;
+                            img.alt = 'AI Hint';
+                            img.className = 'cardbox-ai-hint-image';
+                            aiHintImageContent.innerHTML = '';
+                            aiHintImageContent.appendChild(img);
+                        } else {
+                            aiHintImageContent.innerHTML = result.reason || M.util.get_string('ai_error', 'cardbox');
+                        }
+                    }).fail(function() {
+                        aiHintImageContent.innerHTML = M.util.get_string('ai_error', 'cardbox');
+                    });
+                });
+            });
+        }
+
+        // AI Explain button click handler (will be wired after wrong answer)
+        var aiExplainBtn = document.getElementById('cardbox-ai-explain-btn');
+        var aiExplainResult = document.getElementById('cardbox-ai-explain-result');
+        var aiExplainContent = document.getElementById('cardbox-ai-explain-content');
+        var aiExplainContainer = document.getElementById('cardbox-ai-explain-container');
 
         document.getElementById('cardbox-end-session').addEventListener('click', function(e) {
             // Prevent page reload.

@@ -143,3 +143,122 @@ if ($action === 'savesuggestedanswer') {
     }
 
 }
+
+/* ****************************************** AI Hint (Text) **************************************************** */
+
+if ($action === 'aihint') {
+
+    require_capability('mod/cardbox:useai', $context);
+
+    $questiontext = required_param('questiontext', PARAM_TEXT);
+
+    // Build the prompt.
+    $promptdata = new stdClass();
+    $promptdata->question = $questiontext;
+    $prompt = get_string('ai_hint_prompt', 'cardbox', $promptdata);
+
+    // Call the AI subsystem.
+    try {
+        $aiaction = new \core_ai\aiactions\generate_text(
+            contextid: $context->id,
+            userid: $USER->id,
+            prompttext: $prompt,
+        );
+        $manager = \core\di::get(\core_ai\manager::class);
+        $response = $manager->process_action($aiaction);
+
+        if ($response->get_success()) {
+            $responsedata = $response->get_response_data();
+            $generatedcontent = $responsedata['generatedcontent'] ?? '';
+            echo json_encode(['status' => 'success', 'content' => format_text($generatedcontent, FORMAT_MARKDOWN)]);
+        } else {
+            echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox')]);
+    }
+}
+
+/* ****************************************** AI Hint (Image) **************************************************** */
+
+if ($action === 'aihintimage') {
+
+    require_capability('mod/cardbox:useai', $context);
+
+    $questiontext = required_param('questiontext', PARAM_TEXT);
+
+    // Build the prompt.
+    $promptdata = new stdClass();
+    $promptdata->question = $questiontext;
+    $prompt = get_string('ai_hint_image_prompt', 'cardbox', $promptdata);
+
+    // Call the AI subsystem to generate an image.
+    try {
+        $aiaction = new \core_ai\aiactions\generate_image(
+            contextid: $context->id,
+            userid: $USER->id,
+            prompttext: $prompt,
+            quality: 'standard',
+            aspectratio: 'square',
+            numimages: 1,
+            style: 'natural',
+        );
+        $manager = \core\di::get(\core_ai\manager::class);
+        $response = $manager->process_action($aiaction);
+
+        if ($response->get_success()) {
+            $responsedata = $response->get_response_data();
+            $sourceurl = $responsedata['sourceurl'] ?? '';
+            $draftfile = $responsedata['draftfile'] ?? '';
+            // Return the image URL (sourceurl from provider, or draftfile if stored locally).
+            $imageurl = !empty($sourceurl) ? $sourceurl : '';
+            if (!empty($draftfile)) {
+                $imageurl = $draftfile;
+            }
+            echo json_encode(['status' => 'success', 'imageurl' => $imageurl]);
+        } else {
+            echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox')]);
+    }
+}
+
+/* ****************************************** AI Explain Wrong Answer **************************************************** */
+
+if ($action === 'aiexplain') {
+
+    require_capability('mod/cardbox:useai', $context);
+
+    $questiontext = required_param('questiontext', PARAM_TEXT);
+    $correctanswer = required_param('correctanswer', PARAM_TEXT);
+    $studentanswer = required_param('studentanswer', PARAM_TEXT);
+
+    // Build the prompt.
+    $promptdata = new stdClass();
+    $promptdata->question = $questiontext;
+    $promptdata->correctanswer = $correctanswer;
+    $promptdata->studentanswer = $studentanswer;
+    $prompt = get_string('ai_explain_prompt', 'cardbox', $promptdata);
+
+    // Call the AI subsystem.
+    try {
+        $aiaction = new \core_ai\aiactions\generate_text(
+            contextid: $context->id,
+            userid: $USER->id,
+            prompttext: $prompt,
+        );
+        $manager = \core\di::get(\core_ai\manager::class);
+        $response = $manager->process_action($aiaction);
+
+        if ($response->get_success()) {
+            $responsedata = $response->get_response_data();
+            $generatedcontent = $responsedata['generatedcontent'] ?? '';
+            echo json_encode(['status' => 'success', 'content' => format_text($generatedcontent, FORMAT_MARKDOWN)]);
+        } else {
+            echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox')]);
+    }
+}
