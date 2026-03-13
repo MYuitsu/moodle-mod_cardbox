@@ -192,35 +192,66 @@ if ($action === 'aihintimage') {
     $promptdata->question = $questiontext;
     $prompt = get_string('ai_hint_image_prompt', 'cardbox', $promptdata);
 
-    // Call the AI subsystem to generate an image.
-    try {
-        $aiaction = new \core_ai\aiactions\generate_image(
-            contextid: $context->id,
-            userid: $USER->id,
-            prompttext: $prompt,
-            quality: 'standard',
-            aspectratio: 'square',
-            numimages: 1,
-            style: 'natural',
-        );
-        $manager = \core\di::get(\core_ai\manager::class);
-        $response = $manager->process_action($aiaction);
+    // Read API key and model from Moodle's OpenAI provider config.
+    // Bypasses Moodle AI subsystem to support newer models (gpt-image-1, gpt-image-1-mini, etc.)
+    $apikey = get_config('aiprovider_openai', 'apikey');
+    $model  = get_config('mod_cardbox', 'ai_image_model');
+    if (empty($model)) {
+        $model = 'gpt-image-1-mini'; // Default model.
+    }
 
-        if ($response->get_success()) {
-            $responsedata = $response->get_response_data();
-            $sourceurl = $responsedata['sourceurl'] ?? '';
-            $draftfile = $responsedata['draftfile'] ?? '';
-            // Return the image URL (sourceurl from provider, or draftfile if stored locally).
-            $imageurl = !empty($sourceurl) ? $sourceurl : '';
-            if (!empty($draftfile)) {
-                $imageurl = $draftfile;
+    if (empty($apikey)) {
+        echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
+    } else {
+        try {
+            $requestbody = json_encode([
+                'model'   => $model,
+                'prompt'  => $prompt,
+                'n'       => 1,
+                'size'    => '1024x1024',
+                'output_format' => 'b64_json',
+            ]);
+
+            $ch = curl_init('https://api.openai.com/v1/images/generations');
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => $requestbody,
+                CURLOPT_HTTPHEADER     => [
+                    'Authorization: Bearer ' . $apikey,
+                    'Content-Type: application/json',
+                ],
+                CURLOPT_TIMEOUT        => 60,
+            ]);
+            $rawresponse = curl_exec($ch);
+            $httcode     = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($rawresponse === false || $httcode !== 200) {
+                $apierror = $rawresponse ? (json_decode($rawresponse, true)['error']['message'] ?? $rawresponse) : 'curl error';
+                echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox'), 'debug' => $apierror]);
+            } else {
+                $decoded = json_decode($rawresponse, true);
+                // gpt-image-1 / gpt-image-1-mini returns b64_json.
+                $b64 = $decoded['data'][0]['b64_json'] ?? '';
+                $url = $decoded['data'][0]['url']      ?? '';
+                if (!empty($b64)) {
+                    // Return as data URI so the browser can display it directly.
+                    $imageurl = 'data:image/png;base64,' . $b64;
+                } else {
+                    $imageurl = $url;
+                }
+                if (empty($imageurl)) {
+                    echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox')]);
+                } else {
+                    echo json_encode(['status' => 'success', 'imageurl' => $imageurl]);
+                }
             }
-            echo json_encode(['status' => 'success', 'imageurl' => $imageurl]);
-        } else {
-            echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
+        } catch (\Throwable $e) {
+            echo json_encode(['status' => 'error',
+                'reason' => get_string('ai_error', 'cardbox'),
+                'debug'  => $e->getMessage()]);
         }
-    } catch (Exception $e) {
-        echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox')]);
     }
 }
 
