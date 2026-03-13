@@ -1,0 +1,191 @@
+@import 'default';
+
+section {
+  background: #f7fbff;
+  color: #1a237e;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+}
+
+/* ---------------------------
+   Title slide (CTU-style)
+   --------------------------- */
+section.title {
+  background: #1f5faa;
+  color: #ffffff;
+}
+
+section.title h1,
+section.title h2,
+section.title h3 {
+  color: #ffffff;
+  border: none;
+  padding: 0;
+  margin: 0;
+  letter-spacing: 0.06em;
+}
+
+section.title footer,
+section.title .marp-footer,
+section.title .pagination {
+  display: none !important;
+}
+
+section.title .title-logo {
+  position: absolute;
+  top: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+section.title .title-logo img {
+  width: 90px;
+  height: auto;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  max-height: none;
+}
+
+section.title .title-main {
+  position: absolute;
+  top: 165px;
+  left: 80px;
+  right: 80px;
+  text-align: center;
+}
+
+section.title .title-main .t1 {
+  font-size: 54px;
+  font-weight: 800;
+  line-height: 1.12;
+  text-transform: uppercase;
+}
+
+section.title .title-main .t2 {
+  margin-top: 10px;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+section.title .title-main .subtitle {
+  margin-top: 18px;
+  font-size: 20px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+section.title .title-underline {
+  width: 240px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.65);
+  margin: 18px auto 0;
+}
+
+section.title .title-meta {
+  position: absolute;
+  left: 70px;
+  right: 70px;
+  bottom: 88px;
+  display: flex;
+  justify-content: space-between;
+  gap: 40px;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+section.title .title-meta .label {
+  opacity: 0.9;
+}
+
+section.title .title-meta .value {
+  font-weight: 700;
+}
+
+section.title .title-bar {
+  position: absolute;
+  left: 70px;
+  right: 70px;
+  bottom: 40px;
+  padding-top: 12px;
+  border-top: 2px solid rgba(255, 255, 255, 0.45);
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  opacity: 0.95;
+}
+
+h1, h2, h3 {
+  color: #0d47a1;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+h1 {
+  border-bottom: 2px solid #1976d2;
+  padding-bottom: 0.2em;
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  border-left: 4px solid #1976d2;
+  padding-left: 0.5em;
+  margin-top: 1.2em;
+}
+
+code, pre {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border-radius: 4px;
+}
+
+ul, ol {
+  margin-left: 1.5em;
+}
+
+strong {
+  color: #1565c0;
+}
+
+footer {
+  color: #1976d2;
+  font-size: 0.9em;
+  border-top: 1px solid #90caf9;
+  padding-top: 0.5em;
+}
+
+img {
+  max-width: 80%;
+  max-height: 350px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid #90caf9;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px #90caf966;
+}
+
+/* Table styling */
+table {
+  border-collapse: collapse;
+  margin: 1em auto;
+  font-size: 0.98em;
+}
+th, td {
+  border: 1px solid #90caf9;
+  padding: 0.4em 0.8em;
+}
+th {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+/* Slide number styling */
+.marp-footer {
+  color: #1976d2;
+  font-size: 0.95em;
+}

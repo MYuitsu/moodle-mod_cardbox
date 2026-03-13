@@ -24,7 +24,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_cardbox';
-$plugin->version = 2026031301;
-$plugin->release = '1.1.2';
+$plugin->version = 2026031400;
+$plugin->release = '1.1.3';
 $plugin->requires = 2024100700; // Moodle 4.5.
 $plugin->maturity = MATURITY_STABLE;

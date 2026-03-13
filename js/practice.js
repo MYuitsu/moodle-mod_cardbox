@@ -47,6 +47,30 @@ function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disable
 
     require(['jquery', 'core/templates', 'core/notification', 'core/chartjs'], function ($, templates, notification, chart) {
         
+        /*********** 0. GA4 Helper ***********/
+
+        /**
+         * Send a custom event to GA4.
+         * Safe to call even if gtag is not loaded (e.g. GA4 not configured on site).
+         *
+         * @param {string} eventName
+         * @param {Object} params
+         */
+        function ga4Track(eventName, params) {
+            if (typeof gtag === 'function') {
+                gtag('event', eventName, params);
+            }
+        }
+
+        // GA4: practice_session_started
+        ga4Track('practice_session_started', {
+            cardbox_id: __cmid,
+            card_count: __selection.length,
+            mode: __mode
+        });
+
+        var sessionStartTime = Date.now();
+
         /*********** 1. Variables and Calls ***********/
         
         console.log('=== START PRACTICE ===');
@@ -418,7 +442,16 @@ class EventHandling {
                 // Store the result in controller's evaluate object
                 controller.evaluate.flashcardAnswer.selectedAnswer = selectedAnswer;
                 controller.evaluate.flashcardAnswer.isCorrect = isCorrect;
-                
+
+                // GA4: card_answered (flashcard mode — user picked an option)
+                ga4Track('card_answered', {
+                    cardbox_id: controller.cmid,
+                    card_id: controller.cardId,
+                    correct: isCorrect,
+                    mode: controller.mode,
+                    is_repetition: controller.isrepetition === 1
+                });
+
                 console.log('Stored in evaluate:', controller.evaluate.flashcardAnswer);
                 console.log('=== END FLASHCARD OPTION CLICK ===');
                 
@@ -851,6 +884,15 @@ class Coordinate {
 
                 case 'end-practice':
 
+                    // GA4: practice_session_ended
+                    ga4Track('practice_session_ended', {
+                        cardbox_id: this.cmid,
+                        cards_practiced: this.statistics.countRight + this.statistics.countWrong,
+                        correct_count: this.statistics.countRight,
+                        wrong_count: this.statistics.countWrong,
+                        duration_sec: Math.round((Date.now() - sessionStartTime) / 1000)
+                    });
+
                     this.statistics.finishPractice(this.cmid);
 
             }
@@ -870,6 +912,15 @@ class Coordinate {
             if (iscorrect === 1) {
                 this.cardsleft = this.cardsleft - 1;
             }
+
+            // GA4: card_answered
+            ga4Track('card_answered', {
+                cardbox_id: this.cmid,
+                card_id: this.cardId,
+                correct: iscorrect === 1,
+                mode: this.mode,
+                is_repetition: this.isrepetition === 1
+            });
 
             // 2. Update the status of the current card and request the next card (if there is one).
             require(['jquery'], function($) {
