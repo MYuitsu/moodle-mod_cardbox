@@ -324,9 +324,9 @@ $string['ai_loading'] = 'AI is thinking...';
 $string['ai_loading_image'] = 'AI is generating an image...';
 $string['ai_error'] = 'AI is not available at the moment. Please try again later.';
 $string['ai_error_noprovider'] = 'No AI provider is configured. Please contact your administrator.';
-$string['ai_hint_prompt'] = 'You are a learning assistant. A student is studying flashcards. Give a brief hint to help them answer the following question WITHOUT revealing the answer directly. Respond in BOTH Vietnamese and Japanese: first provide the hint in Vietnamese, then provide the same hint in Japanese. Question: {$a->question}';
+$string['ai_hint_prompt'] = 'Bạn là trợ lý học tập. Hãy đưa ra 1-2 câu gợi ý ngắn gọn, dễ hiểu giúp học sinh trả lời câu hỏi sau mà KHÔNG tiết lộ trực tiếp đáp án. Trả lời bằng tiếng Việt trước, sau đó dịch sang tiếng Nhật. Câu hỏi: {$a->question}';
 $string['ai_hint_image_prompt'] = 'Create a simple visual hint image that helps a student recall the answer to this flashcard question without directly showing the answer text. Question: {$a->question}';
-$string['ai_explain_prompt'] = 'You are a learning assistant. A student answered a flashcard question incorrectly. Briefly explain why the correct answer is right and why their answer was wrong. Question: {$a->question} | Correct answer: {$a->correctanswer} | Student\'s answer: {$a->studentanswer}';
+$string['ai_explain_prompt'] = 'Bạn là trợ lý học tập. Học sinh trả lời sai. Hãy giải thích ngắn gọn (2-3 câu) tại sao đáp án đúng là đúng và đáp án của học sinh sai ở điểm nào. Trả lời bằng tiếng Việt trước, sau đó dịch sang tiếng Nhật. Câu hỏi: {$a->question} | Đáp án đúng: {$a->correctanswer} | Học sinh trả lời: {$a->studentanswer}';
 $string['cardbox:useai'] = 'Use AI features during practice';
 
 // Settings.

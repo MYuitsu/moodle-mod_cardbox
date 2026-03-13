@@ -209,7 +209,7 @@ if ($action === 'aihintimage') {
                 'prompt'  => $prompt,
                 'n'       => 1,
                 'size'    => '1024x1024',
-                'output_format' => 'b64_json',
+                'output_format' => 'png',
             ]);
 
             $ch = curl_init('https://api.openai.com/v1/images/generations');
