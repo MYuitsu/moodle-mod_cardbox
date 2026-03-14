@@ -43,24 +43,24 @@ const Case_Flashcard = 3;
  * @param {type} __data card contents (question and answer) to be passed to the template for rendering.
  * @returns {undefined}
  */
+/**
+ * Send a custom event to GA4.
+ * Safe to call even if gtag is not loaded (e.g. GA4 not configured on site).
+ *
+ * @param {string} eventName
+ * @param {Object} params
+ */
+function ga4Track(eventName, params) {
+    if (typeof gtag === 'function') {
+        gtag('event', eventName, params);
+    }
+}
+
 function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disableacvals) { // Wrapper function that is called by controller.php.
 
     require(['jquery', 'core/templates', 'core/notification', 'core/chartjs'], function ($, templates, notification, chart) {
         
-        /*********** 0. GA4 Helper ***********/
-
-        /**
-         * Send a custom event to GA4.
-         * Safe to call even if gtag is not loaded (e.g. GA4 not configured on site).
-         *
-         * @param {string} eventName
-         * @param {Object} params
-         */
-        function ga4Track(eventName, params) {
-            if (typeof gtag === 'function') {
-                gtag('event', eventName, params);
-            }
-        }
+        /*********** 0. GA4 Helper (defined at module scope above) ***********/
 
         // GA4: practice_session_started
         ga4Track('practice_session_started', {
@@ -68,8 +68,6 @@ function startPractice(Y, __cmid, __selection, __case, __data, __mode, __disable
             card_count: __selection.length,
             mode: __mode
         });
-
-        var sessionStartTime = Date.now();
 
         /*********** 1. Variables and Calls ***********/
         
@@ -787,6 +785,9 @@ class Coordinate {
             
             // History tracking for Previous button functionality
             this.cardHistory = [];
+
+            // GA4: track session start time for duration calculation
+            this.sessionStartTime = Date.now();
             
             this.evaluate = evaluate;
             this.output = output;
@@ -890,7 +891,7 @@ class Coordinate {
                         cards_practiced: this.statistics.countRight + this.statistics.countWrong,
                         correct_count: this.statistics.countRight,
                         wrong_count: this.statistics.countWrong,
-                        duration_sec: Math.round((Date.now() - sessionStartTime) / 1000)
+                        duration_sec: Math.round((Date.now() - this.sessionStartTime) / 1000)
                     });
 
                     this.statistics.finishPractice(this.cmid);
