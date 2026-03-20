@@ -44,4 +44,17 @@
         <div class="hidden-xs col-md-1 col-lg-2 col-xl-3" style="max-width: 30%; flex: 0 0 30%"></div>
     </div>
 
+    <div id="cardbox-ai-course-suggest-section" class="cardbox-ai-course-suggest-section hidden">
+        <button id="cardbox-ai-course-suggest-btn" class="btn btn-outline-primary cardbox-ai-course-suggest-btn">
+            ✨ {{# str }} ai_course_suggest, cardbox {{/ str }}
+        </button>
+        <div id="cardbox-ai-course-suggest-result" class="cardbox-ai-course-suggest-result hidden">
+            <div id="cardbox-ai-course-suggest-loading" class="hidden">
+                <div class="spinner-border spinner-border-sm" role="status"></div>
+                {{# str }} ai_loading, cardbox {{/ str }}
+            </div>
+            <div id="cardbox-ai-course-suggest-content"></div>
+        </div>
+    </div>
+
 </div>

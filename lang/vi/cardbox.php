@@ -373,3 +373,5 @@ $string['ai_cardgen_error'] = 'Không thể tạo thẻ. Vui lòng thử lại.'
 $string['ai_cardgen_empty'] = 'Vui lòng nhập từ hoặc chủ đề trước.';
 $string['ai_error'] = 'Lỗi AI. Vui lòng thử lại.';
 $string['ai_error_noprovider'] = 'Chưa có nhà cung cấp AI nào được cấu hình.';
+$string['ai_course_suggest'] = 'AI gợi ý khóa học';
+$string['ai_course_suggest_tooltip'] = 'Nhận gợi ý khóa học và lộ trình học tập từ AI dựa trên kết quả bài test';

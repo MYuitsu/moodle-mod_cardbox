@@ -794,6 +794,9 @@ class Coordinate {
             // Collection of cards that were answered wrongly. They will be repeated until answered correctly once.
             // Their status in the database won't change, however, i.e. they go back to the first box.
             this.toRepeat = [];
+
+            // Track wrong question texts for AI Course Suggest.
+            this.wrongQuestionTexts = [];
             
             // History tracking for Previous button functionality
             this.cardHistory = [];
@@ -906,7 +909,7 @@ class Coordinate {
                         duration_sec: Math.round((Date.now() - this.sessionStartTime) / 1000)
                     });
 
-                    this.statistics.finishPractice(this.cmid);
+                    this.statistics.finishPractice(this.cmid, this.wrongQuestionTexts);
 
             }
  
@@ -993,6 +996,18 @@ class Coordinate {
             return Math.floor(Math.random() * (max));
         }
 
+        getQuestionTextFromData(data) {
+            var text = '';
+            if (data && data.question && data.question.texts) {
+                for (var t = 0; t < data.question.texts.length; t++) {
+                    if (data.question.texts[t].puretext) {
+                        text += data.question.texts[t].puretext + ' ';
+                    }
+                }
+            }
+            return text.replace(/<[^>]*>/g, '').trim();
+        }
+
         registerProgress(iscorrect) {
             // Regular cards, i.e. cards that still count for the statistics:
             if (this.isrepetition === 0) {
@@ -1002,6 +1017,13 @@ class Coordinate {
 
                 } else {
                     this.statistics.incrementCountWrong();
+
+                    // Track the wrong question text for AI Course Suggest.
+                    var qtext = this.getQuestionTextFromData(this.data);
+                    if (qtext) {
+                        this.wrongQuestionTexts.push(qtext);
+                    }
+
                     /* If a wrong answer was given, mark this card for repetition.
                     /* Unless this was the last card and the next card is going to
                      * be this card once more, anyway.
@@ -1025,7 +1047,7 @@ class Coordinate {
         registerAndRenderNextCard(newdata) {
 
             if (this.next === 0) {
-                this.statistics.finishPractice(this.cmid);
+                this.statistics.finishPractice(this.cmid, this.wrongQuestionTexts);
 
             } else {
                 // Save current card state to history before moving to next card
@@ -1668,7 +1690,10 @@ class Statistics {
      * @param {type} cmid
      * @returns {undefined}
      */
-    finishPractice(cmid) {
+    finishPractice(cmid, wrongQuestionTexts) {
+
+        var countright = this.countright;
+        var countwrong = this.countwrong;
 
         require(['jquery'], function($) { 
             // 1. Hide the last card that was practiced.
@@ -1678,11 +1703,65 @@ class Statistics {
             $.ajax({
                 type: 'POST',
                 url: 'action.php',
-                data: {id: cmid, action: 'saveperformance', countright: this.countright, countwrong: this.countwrong, sesskey: M.cfg.sesskey, starttime: this.starttime},
+                data: {id: cmid, action: 'saveperformance', countright: countright, countwrong: countwrong, sesskey: M.cfg.sesskey, starttime: this.starttime},
                 success: function(result){
                     result = JSON.parse(result);
                 }
             });
+
+            // 3. Show AI Course Suggest button.
+            var suggestSection = document.getElementById('cardbox-ai-course-suggest-section');
+            if (suggestSection) {
+                suggestSection.classList.remove('hidden');
+
+                var suggestBtn = document.getElementById('cardbox-ai-course-suggest-btn');
+                var suggestResult = document.getElementById('cardbox-ai-course-suggest-result');
+                var suggestLoading = document.getElementById('cardbox-ai-course-suggest-loading');
+                var suggestContent = document.getElementById('cardbox-ai-course-suggest-content');
+
+                if (suggestBtn) {
+                    suggestBtn.addEventListener('click', function() {
+                        suggestBtn.disabled = true;
+                        suggestResult.classList.remove('hidden');
+                        suggestLoading.classList.remove('hidden');
+                        suggestContent.innerHTML = '';
+
+                        var wrongQList = (wrongQuestionTexts || []).join('; ');
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'action.php',
+                            data: {
+                                id: cmid,
+                                action: 'aicoursesuggest',
+                                countright: countright,
+                                countwrong: countwrong,
+                                wrongquestions: wrongQList,
+                                sesskey: M.cfg.sesskey
+                            },
+                            success: function(response) {
+                                var res = JSON.parse(response);
+                                suggestLoading.classList.add('hidden');
+                                if (res.status === 'success') {
+                                    suggestContent.innerHTML = res.content;
+                                    ga4Track('ai_course_suggest', {
+                                        cardbox_id: cmid,
+                                        percent_correct: Math.round(100 * countright / (countright + countwrong))
+                                    });
+                                } else {
+                                    suggestContent.innerHTML = '<div class=\"alert alert-warning\">' + (res.reason || 'AI error') + '</div>';
+                                }
+                                suggestBtn.disabled = false;
+                            },
+                            error: function() {
+                                suggestLoading.classList.add('hidden');
+                                suggestContent.innerHTML = '<div class=\"alert alert-warning\">AI error. Please try again.</div>';
+                                suggestBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+            }
         }.bind(this));
 
         // 3. Then display it as a doughnut chart.

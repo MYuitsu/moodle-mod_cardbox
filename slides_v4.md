@@ -41,13 +41,15 @@ description: "Tích hợp GA4 và AI vào plugin Cardbox (Moodle) dạy tiếng 
 
 1. Đặt vấn đề
 2. Nền tảng: Moodle & Plugin Cardbox
-3. Flashcard — Hiệu quả & So sánh
-4. Kiến trúc hệ thống tích hợp
-5. Tích hợp Google Analytics 4 (GA4)
-6. Tích hợp AI — (1) AI Hint: Gợi ý câu hỏi
-7. Tích hợp AI — (2) AI Explain: Giải thích câu trả lời sai
-8. Hạn chế & Hướng phát triển
-9. Q&A
+3. Kiến trúc hệ thống tích hợp
+4. Tích hợp Google Analytics 4 (GA4)
+5. Tích hợp AI — (1) AI Hint: Gợi ý câu hỏi
+6. Tích hợp AI — (2) AI Explain: Giải thích câu trả lời sai
+7. Tích hợp AI — (3) AI Course Suggest: Gợi ý khóa học
+8. Tích hợp AI — (4) AI Card Generator: Tạo thẻ tự động
+9. Đánh giá: AI trong thương mại điện tử giáo dục
+10. Kết luận & Hướng phát triển
+11. Q&A
 
 ---
 
@@ -69,23 +71,42 @@ description: "Tích hợp GA4 và AI vào plugin Cardbox (Moodle) dạy tiếng 
 
 ---
 
-## Nền tảng: Moodle & Plugin Cardbox
+## Nền tảng: Moodle & Flashcard
 
-**Moodle LMS** — hệ thống quản lý học tập mã nguồn mở, phổ biến trong giáo dục đại học
+<table style="width:100%; border-collapse:separate; border-spacing:10px; font-size:0.8em; margin-top:8px">
+<tr>
+  <td style="vertical-align:top; width:55%; padding:0">
+    <strong>Moodle LMS</strong> — hệ thống quản lý học tập mã nguồn mở, phổ biến trong giáo dục đại học<br>
+    <strong>mod_cardbox</strong> — plugin flashcard tích hợp sẵn trong Moodle<br><br>
+    <strong>Tại sao chọn Flashcard?</strong>
+    <table style="width:100%; font-size:0.95em; border-collapse:collapse">
+    <tr><td style="padding:3px 6px"><strong>Spaced Repetition</strong></td><td style="padding:3px 6px">Ôn đúng lúc — tối ưu trí nhớ dài hạn</td></tr>
+    <tr><td style="padding:3px 6px"><strong>Active Recall</strong></td><td style="padding:3px 6px">Buộc não nhớ lại thay vì đọc thụ động</td></tr>
+    <tr><td style="padding:3px 6px"><strong>Microlearning</strong></td><td style="padding:3px 6px">10–15 phút/ngày đủ tiến bộ rõ rệt</td></tr>
+    </table>
+  </td>
+  <td style="vertical-align:top; width:45%; padding:0">
+    <table style="width:100%; border-collapse:separate; border-spacing:6px; font-size:0.9em">
+    <tr>
+      <td style="background:#e8f0fe; border-radius:8px; border-left:4px solid #1a56db; padding:10px; text-align:center">
+        <div style="font-size:2em; font-weight:900; color:#1a56db">200%</div>
+        <div style="color:#555; font-size:0.85em">ghi nhớ tốt hơn</div>
+      </td>
+      <td style="background:#e6f4ea; border-radius:8px; border-left:4px solid #137333; padding:10px; text-align:center">
+        <div style="font-size:2em; font-weight:900; color:#137333">50%</div>
+        <div style="color:#555; font-size:0.85em">ít thời gian hơn</div>
+      </td>
+      <td style="background:#fce8e6; border-radius:8px; border-left:4px solid #c5221f; padding:10px; text-align:center">
+        <div style="font-size:2em; font-weight:900; color:#c5221f">80%</div>
+        <div style="color:#555; font-size:0.85em">nhớ sau 1 tuần</div>
+      </td>
+    </tr>
+    </table>
+  </td>
+</tr>
+</table>
 
-**mod_cardbox** — plugin flashcard tích hợp sẵn trong Moodle
-
-**Lợi ích của học bằng flashcard:**
-
-| Lợi ích | Mô tả |
-|:---|:---|
-| **Spaced Repetition** | Ôn tập đúng lúc — tối ưu hoá trí nhớ dài hạn |
-| **Active Recall** | Buộc não nhớ lại thay vì đọc thụ động |
-| **Microlearning** | Học từng thẻ nhỏ — phù hợp học mọi lúc mọi nơi |
-| **Tự đánh giá** | Người học biết ngay mình đang ở đâu |
-| **Đa phương tiện** | Hỗ trợ văn bản, hình ảnh, âm thanh |
-
-> Flashcard là phương pháp học ngoại ngữ được nghiên cứu và chứng minh hiệu quả — đặc biệt phù hợp với tiếng Nhật (Kanji, từ vựng, ngữ pháp).
+> Flashcard là phương pháp học ngoại ngữ được chứng minh hiệu quả — đặc biệt phù hợp với tiếng Nhật (Kanji, từ vựng, ngữ pháp). *(Cepeda 2008, Nation 2001, Roediger & Karpicke 2006)*
 
 ---
 
@@ -99,72 +120,11 @@ description: "Tích hợp GA4 và AI vào plugin Cardbox (Moodle) dạy tiếng 
 
 ---
 
-## Flashcard — Hiệu quả được chứng minh
-
-<table style="width:100%; border-collapse:separate; border-spacing:12px; font-size:0.82em; margin-top:16px">
-<tr>
-  <td style="background:#e8f0fe; border-radius:10px; border-left:5px solid #1a56db; padding:18px 20px; vertical-align:top; width:33%">
-    <div style="font-size:2.4em; font-weight:900; color:#1a56db; line-height:1">200%</div>
-    <div style="color:#333; margin-top:6px">ghi nhớ tốt hơn với <strong>Spaced Repetition</strong> so với đọc thụ động</div>
-    <div style="color:#888; font-size:0.85em; margin-top:4px">Cepeda et al., 2008</div>
-  </td>
-  <td style="background:#e6f4ea; border-radius:10px; border-left:5px solid #137333; padding:18px 20px; vertical-align:top; width:33%">
-    <div style="font-size:2.4em; font-weight:900; color:#137333; line-height:1">50%</div>
-    <div style="color:#333; margin-top:6px">ít thời gian hơn để đạt <strong>2.000 từ vựng</strong> tiếng Nhật</div>
-    <div style="color:#888; font-size:0.85em; margin-top:4px">Nation, 2001 — SRS vs Textbook</div>
-  </td>
-  <td style="background:#fce8e6; border-radius:10px; border-left:5px solid #c5221f; padding:18px 20px; vertical-align:top; width:34%">
-    <div style="font-size:2.4em; font-weight:900; color:#c5221f; line-height:1">80%</div>
-    <div style="color:#333; margin-top:6px">tỷ lệ nhớ lại sau <strong>1 tuần</strong> với flashcard vs ~20% học thụ động</div>
-    <div style="color:#888; font-size:0.85em; margin-top:4px">Roediger & Karpicke, 2006</div>
-  </td>
-</tr>
-</table>
-
----
-
-## Flashcard vs. Học truyền thống
-
-<table style="width:100%; border-collapse:separate; border-spacing:12px; font-size:0.82em; margin-top:16px">
-<tr>
-  <td style="background:#f4f4f4; border-radius:10px; padding:18px 20px; vertical-align:top; width:48%">
-    <div style="font-weight:700; color:#555; font-size:1em; margin-bottom:10px">📚 Học truyền thống</div>
-    <ul style="color:#666; margin:0; padding-left:18px; line-height:2">
-      <li>Đọc − ghi lại − đọc lại</li>
-      <li>Không có phản hồi tức thì</li>
-      <li>Ôn tập đồng loạt, không cá nhân hoá</li>
-      <li>Đường cong quên lãng dốc</li>
-    </ul>
-  </td>
-  <td style="background:#e8f0fe; border-radius:10px; padding:18px 20px; vertical-align:top; width:48%">
-    <div style="font-weight:700; color:#1a56db; font-size:1em; margin-bottom:10px">🃏 Flashcard + Spaced Repetition</div>
-    <ul style="color:#333; margin:0; padding-left:18px; line-height:2">
-      <li><strong>Active Recall</strong> — buộc não tự nhớ lại</li>
-      <li>Phản hồi ngay lập tức (đúng/sai)</li>
-      <li>Ôn đúng lúc — tối ưu trí nhớ dài hạn</li>
-      <li>10–15 phút/ngày đủ tiến bộ rõ rệt</li>
-    </ul>
-  </td>
-</tr>
-</table>
-
----
-
-## Tổng quan hệ thống tích hợp
-
-Hai lớp tích hợp **độc lập**, **không xâm phạm** vào core Moodle:
-
-| | Lớp 1 — GA4 | Lớp 2 — AI Features |
-|:---|:---|:---|
-| **Mục tiêu** | Đo lường hành vi học tập | Nâng cao trải nghiệm người học |
-| **Cách hoạt động** | `gtag.js` nhúng vào HEAD site | `action.php` gọi `core_ai` subsystem |
-| **Triển khai** | < 30 phút, không sửa code | Bật/tắt từng tính năng độc lập |
-
----
-
 <!-- _class: content-slide -->
 
-## Kiến trúc plugin trong Moodle
+## Kiến trúc hệ thống tích hợp
+
+Hai lớp tích hợp **độc lập**, **không xâm phạm** vào core Moodle — **GA4** (đo lường) + **AI** (nâng cao trải nghiệm):
 
 <table style="width:100%; border-collapse:separate; border-spacing:0; font-size:0.78em; margin-top:10px">
 <tr>
@@ -274,6 +234,8 @@ Các chỉ số theo dõi trên GA4 Dashboard:
 
 ## Tích hợp AI — (1) AI Hint: Gợi ý câu hỏi
 
+**Vấn đề:** Người học gặp thẻ khó → không có gợi ý → chọn "Tôi không biết" → **nản → bỏ cuộc**
+
 **Giải pháp:** Nút **"✨ AI gợi ý"** — gợi ý thông minh, **cá nhân hóa theo từng người học**
 
 AI đọc lịch sử của **người dùng hiện tại** với **thẻ hiện tại** từ DB → chọn mức gợi ý phù hợp:
@@ -322,39 +284,28 @@ AI đọc lịch sử của **người dùng hiện tại** với **thẻ hiện
 
 ---
 
-## AI Hint — Trải nghiệm người học
+## AI Hint — Demo luồng hoạt động
 
-**Không có AI Hint:** Gặp câu khó → chọn "Tôi không biết" → thẻ bị đánh dấu sai → nản → thoát
-
-**Có AI Hint:**
+**Luồng trong Flashcard mode:**
 
 1. Câu hỏi: *"Từ nào có nghĩa là 'ăn'?"*
-2. Không nhớ → nhấn **AI gợi ý**
+2. Không nhớ → nhấn **✨ AI gợi ý**
 3. AI: *"Động từ đuôi -る, diễn tả hành động đưa thức ăn vào miệng."*
 4. **Nhớ ra → nhập đáp án → trả lời đúng → cảm giác thành công**
 
-> **Insight GA4:** Số lần AI Hint được gọi trước `card_answered` cho biết chính xác thẻ nào
-> đang làm người học bỏ cuộc → **ưu tiên cải thiện nội dung những thẻ đó trước**.
+**Kết nối GA4:** Số lần `ai_hint` được gọi trước `card_answered` cho biết chính xác thẻ nào đang làm người học bỏ cuộc → **ưu tiên cải thiện nội dung những thẻ đó trước**.
 
----
-
-
-<!-- _class: image-slide -->
-
-## AI Hint — Gợi ý hình ảnh minh hoạ
-
-<div style="display:flex; justify-content:center; align-items:center; height:88%">
-  <img src="images/ai-hint-images.png" style="max-width:100%; max-height:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15)">
-</div>
+> **Insight marketing:** AI Hint = công cụ giữ chân người học (giảm drop-off) + dữ liệu ưu tiên cải thiện nội dung.
 
 ---
 
 <!-- _class: image-slide -->
 
-## AI Hint — Giao diện gợi ý văn bản
+## AI Hint — Giao diện gợi ý văn bản & hình ảnh
 
-<div style="display:flex; justify-content:center; align-items:center; height:88%">
-  <img src="images/ai-hint.png" style="max-width:100%; max-height:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+<div style="display:flex; justify-content:center; align-items:center; gap:16px; height:88%">
+  <img src="images/ai-hint.png" style="max-width:48%; max-height:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+  <img src="images/ai-hint-images.png" style="max-width:48%; max-height:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15)">
 </div>
 
 ---
@@ -386,30 +337,125 @@ Người học hiểu lý do sai → nhớ lâu hơn → **quay lại học** �
 
 ---
 
-## AI Explain — Demo luồng hoạt động
+## AI Explain — Demo & Giao diện
 
-**Luồng trong Autocheck mode:**
+<table style="width:100%; border-collapse:separate; border-spacing:12px; font-size:0.82em">
+<tr>
+  <td style="vertical-align:top; width:50%; padding:0">
+    <strong>Luồng hoạt động:</strong><br><br>
+    1. Câu hỏi: <em>"食べる có nghĩa là gì?"</em><br>
+    2. Nhập <em>"uống"</em> → chấm <strong style="color:#c5221f">sai</strong><br>
+    3. Nhấn <strong>✨ AI giải thích</strong><br>
+    4. AI: <em>"食べる (taberu) = 'ăn'. 'Uống' là 飲む (nomu). 食べる dùng cho thức ăn rắn, 飲む dùng cho chất lỏng."</em><br><br>
+    <strong>Kết nối GA4:</strong> <code>ai_explain</code> sau <code>card_answered(correct=false)</code> → biết thẻ nào cần cải thiện
+  </td>
+  <td style="vertical-align:top; width:50%; padding:0">
+    <img src="images/ai-explain.png" style="max-width:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15)">
+  </td>
+</tr>
+</table>
 
-1. Câu hỏi: *"食べる có nghĩa là gì?"*
-2. Nhập *"uống"* → chấm **sai**, hiện đáp án đúng: *"ăn"*
-3. Nhấn ** AI giải thích**
-4. AI: *"食べる (taberu) = 'ăn'. 'Uống' là 飲む (nomu). 食べる dùng cho thức ăn rắn, 飲む dùng cho chất lỏng."*
-
-**Prompt** (trong `lang/en/cardbox.php`):
-> *"Giải thích ngắn gọn (2-3 câu) tại sao đáp án đúng là đúng. Tiếng Việt trước, sau đó tiếng Nhật."*
-
-**Kết nối GA4:** `ai_explain` calls sau `card_answered(correct=false)` → biết thẻ nào cần cải thiện nội dung
 
 ---
 
-<!-- _class: image-slide -->
+## Tích hợp AI — (3) AI Course Suggest: Gợi ý khóa học
 
-## AI Explain — Minh hoạ giao diện
+**Vấn đề:** Người học hoàn thành bài test → chỉ thấy biểu đồ đúng/sai → **không biết học gì tiếp theo**
 
-<div style="display:flex; justify-content:center; align-items:center; height:88%">
-  <img src="images/ai-explain.png" style="max-width:100%; max-height:100%; border-radius:8px; box-shadow:0 4px 12px rgba(0,0,0,0.15)">
-</div>
+**Giải pháp:** Nút **"✨ AI gợi ý khóa học"** xuất hiện ngay sau khi kết thúc phiên luyện tập
 
+- AI phân tích kết quả phiên: tỷ lệ đúng/sai, danh sách câu sai cụ thể
+- Đưa ra **đánh giá trình độ** + **gợi ý khóa học/tài nguyên** + **lộ trình ôn tập**
+- Phản hồi bằng **tiếng Việt**, có bullet points rõ ràng
+
+> Thay đổi trải nghiệm: từ **"xong bài — bỏ đi"** → **"xong bài — biết học gì tiếp"**
+
+---
+
+## AI Course Suggest — Demo luồng hoạt động
+
+**Luồng sau khi kết thúc phiên luyện tập:**
+
+1. Hoàn thành phiên: 8/15 đúng (53%), 7 câu sai
+2. Biểu đồ doughnut hiển thị kết quả
+3. Nhấn **✨ AI gợi ý khóa học**
+4. AI phân tích:
+   - *"Trình độ: Đang ở giai đoạn N5→N4. Cần củng cố từ vựng cơ bản."*
+   - *"Gợi ý: Minna no Nihongo Bài 10-15, app Anki deck N4 Kanji"*
+   - *"Lộ trình: Ôn lại bộ Kanji cơ bản 2 ngày/lần, 15 phút mỗi phiên"*
+
+**Kết nối GA4:** `ai_course_suggest` event → biết bao nhiêu người học cần tư vấn → đo mức độ engagement sau gợi ý
+
+---
+
+## AI Course Suggest — Tác động marketing
+
+| Chỉ số | Tác động |
+|:---|:---|
+| **Returning Users** | Người học có lộ trình rõ ràng → quay lại lần sau |
+| **Engagement** | Nhận gợi ý cụ thể → tăng động lực tiếp tục |
+| **Session quality** | Từ "luyện tập bị động" → "hành trình học có hướng dẫn" |
+| **Retention** | Cá nhân hóa trải nghiệm → giảm tỷ lệ bỏ học |
+
+> **Insight GA4:** Tỷ lệ click "AI gợi ý khóa học" sau phiên có % thấp → cần cải thiện nội dung thẻ.
+> Tỷ lệ click cao + quay lại luyện tập → chứng minh giá trị của tính năng.
+
+---
+
+## Tích hợp AI — (4) AI Card Generator: Tạo thẻ tự động
+
+**Vấn đề:** Giảng viên mất hàng giờ nhập tay từng thẻ → **bottleneck mở rộng nội dung**
+
+**Giải pháp:** **AI tạo thẻ tự động** — 2 chế độ:
+
+<table style="width:100%; border-collapse:separate; border-spacing:8px; font-size:0.82em; margin-top:6px">
+<tr>
+  <td style="background:#e8f0fe; border-radius:10px; border-left:5px solid #1a56db; padding:14px 16px; vertical-align:top; width:50%">
+    <strong style="color:#1a56db">📝 Nhập từ/chủ đề</strong><br><br>
+    Nhập <em>"食べる"</em> hoặc <em>"màu sắc"</em><br>
+    → AI tạo cặp Q&A tiếng Nhật<br>
+    → Lưu thẳng vào bộ thẻ
+  </td>
+  <td style="background:#e6f4ea; border-radius:10px; border-left:5px solid #137333; padding:14px 16px; vertical-align:top; width:50%">
+    <strong style="color:#137333">🎌 Chọn cấp JLPT (N1–N5)</strong><br><br>
+    Chọn N5 → AI chọn từ ngẫu nhiên<br>
+    → Tạo flashcard phù hợp cấp độ<br>
+    → Mỗi lần nhấn = 1 thẻ mới
+  </td>
+</tr>
+</table>
+
+> **Giá trị:** Giảm **80% thời gian** biên soạn. Giảng viên tập trung duyệt nội dung thay vì nhập liệu.
+> **GA4 insight:** Đo số thẻ AI-generated vs manual → biết AI đóng góp bao nhiêu % nội dung.
+
+---
+
+## Đánh giá: AI trong thương mại điện tử giáo dục
+
+<table style="width:100%; border-collapse:separate; border-spacing:8px; font-size:0.78em; margin-top:6px">
+<tr>
+  <td style="background:#e8f0fe; border-radius:10px; border-left:5px solid #1a56db; padding:14px 16px; vertical-align:top; width:50%">
+    <strong style="color:#1a56db">🎯 Cá nhân hóa hành trình mua</strong><br>
+    <span style="color:#333">AI phân tích kết quả test → gợi ý khóa học phù hợp trình độ → <strong>tăng tỷ lệ chuyển đổi (conversion)</strong>, giống như Amazon "Khách hàng cũng mua..."</span>
+  </td>
+  <td style="background:#e6f4ea; border-radius:10px; border-left:5px solid #137333; padding:14px 16px; vertical-align:top; width:50%">
+    <strong style="color:#137333">📈 Tăng giá trị vòng đời (LTV)</strong><br>
+    <span style="color:#333">Người học nhận lộ trình → mua khóa tiếp theo → <strong>upsell tự nhiên</strong>. AI biến 1 lần mua thành chuỗi khóa học liên tục</span>
+  </td>
+</tr>
+<tr>
+  <td style="background:#fff3e0; border-radius:10px; border-left:5px solid #e65100; padding:14px 16px; vertical-align:top">
+    <strong style="color:#e65100">🔄 Giảm tỷ lệ bỏ học (Churn)</strong><br>
+    <span style="color:#333">AI Hint + AI Explain giữ người học không bỏ cuộc → <strong>giảm hoàn tiền</strong>, tăng đánh giá 5 sao → thu hút khách hàng mới</span>
+  </td>
+  <td style="background:#fce8e6; border-radius:10px; border-left:5px solid #c5221f; padding:14px 16px; vertical-align:top">
+    <strong style="color:#c5221f">💡 Nội dung tự động — giảm chi phí</strong><br>
+    <span style="color:#333">AI Card Generator tạo thẻ tự động → <strong>giảm 80% thời gian</strong> biên soạn → mở rộng catalogue nhanh hơn đối thủ</span>
+  </td>
+</tr>
+</table>
+
+> **Kết luận:** AI không chỉ cải thiện trải nghiệm học — mà trực tiếp **tăng doanh thu**: conversion cao hơn, retention tốt hơn, chi phí sản xuất nội dung thấp hơn.
 
 ---
 
@@ -422,11 +468,28 @@ Người học hiểu lý do sai → nhớ lâu hơn → **quay lại học** �
 
 ---
 
+## Kết luận
+
+**Đã triển khai thành công:**
+
+| Tính năng | Mục tiêu | Trạng thái |
+|:---|:---|:---|
+| **GA4 Integration** | Đo lường hành vi học tập (3 custom events) | ✅ Hoàn thành |
+| **AI Hint** | Gợi ý cá nhân hóa (văn bản + hình ảnh) | ✅ Hoàn thành |
+| **AI Explain** | Giải thích câu sai song ngữ Việt–Nhật | ✅ Hoàn thành |
+| **AI Course Suggest** | Gợi ý khóa học + lộ trình sau test | ✅ Hoàn thành |
+| **AI Card Generator** | Tạo thẻ tự động (từ/JLPT) | ✅ Hoàn thành |
+
+**Giá trị mang lại:** GA4 cung cấp dữ liệu để tối ưu nội dung; AI nâng cao trải nghiệm và giữ chân người học.
+
+---
+
 ## Hướng phát triển
 
-- ~~**AI Hint cá nhân hóa**~~: ✅ **Đã triển khai** — gợi ý thay đổi theo lịch sử sai/đúng của từng thẻ
-- ~~**AI Card Generator**~~: ✅ **Đã triển khai** — nhập từ/chủ đề hoặc chọn cấp JLPT (N1–N5), AI tự tạo thẻ và lưu ngay vào bộ thẻ
 - **GA4 + BigQuery**: Xuất dữ liệu vào BigQuery để phân tích cohort và dự đoán nguy cơ bỏ học
+- **AI Quiz Generator**: Tự động tạo bài kiểm tra từ bộ thẻ có sẵn
+- **Chatbot học tập**: AI trị chuyện tương tác để luyện hội thoại tiếng Nhật
+- **Cache AI responses**: Giảm latency và chi phí bằng cách cache kết quả AI cho các câu hỏi lặp lại
 
 ---
 

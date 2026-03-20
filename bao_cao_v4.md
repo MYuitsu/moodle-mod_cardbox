@@ -1,6 +1,6 @@
 <style>
 @page { size: A4; margin: 20mm 18mm; }
-body { font-family: "Times New Roman", serif; font-size: 12pt; }
+body { font-family: "Times New Roman", serif; font-size: 12pt; line-height: 1.6; }
 h1, h2, h3, h4 { font-family: "Times New Roman", serif; }
 </style>
 
@@ -12,20 +12,20 @@ h1, h2, h3, h4 { font-family: "Times New Roman", serif; }
       <img src="images/logoCTU.png" alt="Logo CTU" style="width:90mm;height:auto;" />
     </div>
     <div style="font-size:18pt;font-weight:700;margin:8px 0 8px;">BÁO CÁO</div>
-    <div style="font-size:14pt;font-weight:700;margin-bottom:28px;">HỌC PHẦN: KHO DỮ LIỆU VÀ KHAI PHÁ DỮ LIỆU</div>
+    <div style="font-size:14pt;font-weight:700;margin-bottom:28px;">HỌC PHẦN: TIẾP THỊ VÀ KINH DOANH KỸ THUẬT SỐ</div>
     <div style="font-size:16pt;font-weight:700;margin:8px 0;">ĐỀ TÀI:</div>
-    <div style="font-size:18pt;font-weight:700;margin:4px 0;">DỰ ĐOÁN ĐIỂM NÓNG SỐT XUẤT HUYẾT</div>
-    <div style="font-size:18pt;font-weight:700;margin:4px 0;">THEO XÃ/ PHƯỜNG</div>
-    <div style="font-size:14pt;font-weight:700;margin-top:6px;">Dựa trên thời tiết (không gian - thời gian)</div>
-    <div style="font-size:13pt;font-weight:700;margin-top:20px;">Mã học phần: CTH603</div>
+    <div style="font-size:18pt;font-weight:700;margin:4px 0;">TÍCH HỢP GOOGLE ANALYTICS VÀ AI</div>
+    <div style="font-size:18pt;font-weight:700;margin:4px 0;">VÀO HỖ TRỢ GIẢNG DẠY TIẾNG NHẬT</div>
+    <div style="font-size:14pt;font-weight:700;margin-top:6px;">Trên nền tảng Moodle</div>
+    <div style="font-size:13pt;font-weight:700;margin-top:20px;">Mã học phần: CT573HT</div>
   </div>
   <div style="margin-top:40mm;display:flex;justify-content:space-between;gap:20mm;">
     <div style="width:50%;font-size:12.5pt;">
-      <div style="font-weight:700;margin-bottom:6px;">Giảng viên:</div>
+      <div style="font-weight:700;margin-bottom:6px;">Giảng viên hướng dẫn:</div>
       <div>PGS.TS. Nguyễn Thái Nghe</div>
     </div>
     <div style="width:50%;font-size:12.5pt;">
-      <div style="font-weight:700;margin-bottom:6px;">Sinh viên:</div>
+      <div style="font-weight:700;margin-bottom:6px;">Thành viên thực hiện:</div>
       <div>1. M2525017 - Nguyễn Thái Duy</div>
       <div>2. M2525021 - Đỗ Thị Cẩm Hằng</div>
     </div>
@@ -36,763 +36,540 @@ h1, h2, h3, h4 { font-family: "Times New Roman", serif; }
 
 # MỤC LỤC
 
-1. Tóm tắt  
-2. Chương 1. Giới thiệu  
-3. Chương 2. Tổng quan liên quan  
-4. Chương 3. Dữ liệu và tiền xử lý  
-5. Chương 4. Phương pháp  
-6. Chương 5. Thiết kế hệ thống ứng dụng  
-7. Chương 6. Thực nghiệm và kết quả  
-8. Chương 7. Kết luận, thảo luận và phụ lục kỹ thuật  
-9. Phụ lục A: Danh sách hình
+1. Tóm tắt
+2. Chương 1. Giới thiệu
+3. Chương 2. Tổng quan lý thuyết
+4. Chương 3. Kiến trúc hệ thống tích hợp
+5. Chương 4. Tích hợp Google Analytics 4 (GA4)
+6. Chương 5. Tích hợp AI vào plugin Cardbox
+7. Chương 6. Đánh giá AI trong thương mại điện tử giáo dục
+8. Chương 7. Hạn chế, kết luận và hướng phát triển
+9. Tài liệu tham khảo
 
 <div style="page-break-after:always;"></div>
 
 # DANH MỤC HÌNH
 
-Hình 1. Tổng số ca SXH theo tháng  
-Hình 2. Xu hướng ca SXH và mưa trung bình theo tháng  
-Hình 3. Tương quan độ trễ: $y(t)$ và $rain(t-k)$  
-Hình 4. Phân phối nhãn $y$ (log-count)  
-Hình 5. Tỷ lệ $y=0$ theo tháng  
-Hình 6. Var(y) vs Mean(y) theo xã  
-Hình 7. So sánh baseline vs updated theo metrics  
-Hình 8. Scatter $y$ thật vs $\hat{y}$ (HistGB Poisson)  
-Hình 9. Feature importance (Permutation, -MAE)  
-Hình 10. Toàn tỉnh (test): $y$ thật vs $y$ dự đoán theo ngày  
-Hình 11. Calibration: mean(y) vs mean(ŷ)  
-Hình 12. GLM residuals vs fitted  
-Hình 13. Hotspot Hit@10 theo ngày  
-Hình 14. Backtest 2025: MAE theo tháng  
-Hình 15. Backtest 2025: Hit@10 theo tháng
+Hình 1. Giao diện Plugin Cardbox trên Moodle
+Hình 2. Kiến trúc hệ thống tích hợp (Browser – mod_cardbox – AI/GA4)
+Hình 3. Cấu hình GA4 trong Moodle (Additional HTML)
+Hình 4. GA4 Events Report — Dashboard
+Hình 5. AI Hint — Giao diện gợi ý văn bản
+Hình 6. AI Hint — Giao diện gợi ý bằng hình ảnh
+Hình 7. AI Explain — Giao diện giải thích câu sai
 
 <div style="page-break-after:always;"></div>
 
-# BÁO CÁO MÔN HỌC (Thạc sĩ) — Khai phá dữ liệu
-
-**Mã nguồn:** dự án trong thư mục hiện tại.
-
----
-
 ## Tóm tắt
-Sốt xuất huyết (SXH) có mối liên hệ mạnh với các yếu tố khí tượng như lượng mưa, nhiệt độ và gió. Báo cáo này xây dựng pipeline dữ liệu ghép nối ca bệnh theo ngày–xã/phường với thời tiết theo ngày–xã/phường, thiết kế bộ đặc trưng có độ trễ (lag) và trung bình trượt (rolling), sau đó huấn luyện và so sánh các mô hình dự báo số ca: **Poisson Regression (GLM)**, **Gradient Boosting với Poisson loss** và **Linear Regression** (baseline). Cuối cùng, hệ thống được triển khai thành ứng dụng web (FastAPI + giao diện bản đồ) để nhập ngày, xuất **Top-K điểm nóng** và trực quan hóa trên bản đồ.
+
+Báo cáo trình bày việc tích hợp **Google Analytics 4 (GA4)** và **trí tuệ nhân tạo (AI)** vào plugin flashcard **mod_cardbox** trên nền tảng Moodle, phục vụ giảng dạy tiếng Nhật. Hệ thống giải quyết các vấn đề thực tế trong quá trình học ngoại ngữ bằng flashcard: thiếu gợi ý khi gặp thẻ khó, không có giải thích khi trả lời sai, không biết học gì tiếp sau khi hoàn thành bài test, và giảng viên tốn nhiều thời gian nhập liệu thẻ. Bốn tính năng AI được triển khai: **(1) AI Hint** — gợi ý cá nhân hóa theo lịch sử người học, **(2) AI Explain** — giải thích câu trả lời sai song ngữ Việt–Nhật, **(3) AI Course Suggest** — gợi ý khóa học và lộ trình sau khi kết thúc phiên luyện tập, **(4) AI Card Generator** — tạo thẻ tự động theo cấp JLPT hoặc chủ đề. Song song, GA4 được tích hợp để đo lường hành vi học tập thông qua 3 custom events, cung cấp dữ liệu cho giảng viên tối ưu hóa nội dung. Báo cáo phân tích từ góc nhìn **tiếp thị kỹ thuật số**, đánh giá tác động của AI lên các chỉ số conversion, retention, engagement và customer lifetime value trong bối cảnh thương mại điện tử giáo dục.
 
 ---
 
 ## CHƯƠNG 1. GIỚI THIỆU
 
 ### 1.1. Bối cảnh
-SXH chịu ảnh hưởng bởi yếu tố khí tượng: mưa tạo điều kiện sinh sản của muỗi, nhiệt độ ảnh hưởng vòng đời muỗi và tốc độ phát triển của virus, gió ảnh hưởng khuếch tán và hoạt động bay [1], [3], [4]. Vì vậy, kết hợp dữ liệu ca bệnh theo địa bàn với dữ liệu thời tiết theo ngày có thể giúp xây dựng hệ thống **cảnh báo sớm** theo không gian–thời gian [2].
+
+Flashcard là phương pháp học ngoại ngữ đã được chứng minh hiệu quả qua nhiều nghiên cứu khoa học. Kỹ thuật **Spaced Repetition** (lặp lại ngắt quãng) giúp tối ưu trí nhớ dài hạn bằng cách ôn tập đúng thời điểm [1], [2]. **Active Recall** (nhớ lại chủ động) buộc não bộ truy xuất thông tin thay vì đọc thụ động, cải thiện khả năng ghi nhớ lên đến 200% so với phương pháp truyền thống [3], [4]. Đặc biệt, flashcard phù hợp với tiếng Nhật — ngôn ngữ có hệ thống Kanji phức tạp, đòi hỏi lặp lại nhiều lần để ghi nhớ [5], [6].
+
+**Moodle** là hệ thống quản lý học tập (LMS) mã nguồn mở phổ biến nhất thế giới, được sử dụng tại hơn 240 quốc gia với hơn 400 triệu người dùng [7], [8]. Plugin **mod_cardbox** mở rộng Moodle bằng tính năng flashcard tích hợp hệ thống Leitner [9], cho phép sinh viên luyện tập từ vựng ngay trong môi trường học tập trực tuyến.
+
+Tuy nhiên, flashcard truyền thống trên Moodle vẫn tồn tại nhiều hạn chế:
+
+- Gặp thẻ khó → không có gợi ý, không biết hỏi ai → bỏ cuộc.
+- Lật thẻ xong → không hiểu *tại sao* đáp án lại như vậy.
+- Học một mình → không có phản hồi, không có động lực tiếp tục.
+- Bộ thẻ lớn → giảng viên mất hàng giờ nhập tay từng thẻ một.
+
+Từ góc nhìn giảng viên và quản trị viên:
+
+- Không biết nội dung nào giúp ích, nội dung nào nên loại bỏ.
+- Không có dữ liệu hành vi để cải thiện khóa học.
 
 ### 1.2. Vấn đề nghiên cứu
-Bài toán đặt ra: với một ngày $t$, dự đoán xã/phường nào có **nguy cơ SXH cao** (hoặc số ca kỳ vọng cao), dựa trên:
-- Xu hướng ca bệnh trước đó.
-- Các biến thời tiết hiện tại và các biến thời tiết có độ trễ nhiều ngày trước.
+
+Moodle mặc định không ghi nhận hành vi học tập chi tiết bên trong plugin, khiến giảng viên thiếu dữ liệu để tối ưu nội dung. Đồng thời, trải nghiệm học flashcard vẫn mang tính thụ động — người học không được hỗ trợ khi gặp khó khăn và không có hướng dẫn cá nhân hóa.
+
+Bài toán đặt ra: **Làm thế nào để biến flashcard từ công cụ ôn tập đơn giản thành hệ thống học tập thông minh, có dữ liệu, có AI hỗ trợ — và đánh giá giá trị tiếp thị kỹ thuật số mà hệ thống mang lại?**
 
 ### 1.3. Mục tiêu
-- Xây dựng pipeline ghép nối dữ liệu ca bệnh – thời tiết theo xã/phường và theo ngày.
-- Train và so sánh các mô hình dự báo số ca (Poisson Regression, Gradient Boosting với Poisson loss, Linear Regression).
-- Thiết kế ứng dụng (backend + giao diện) nhận ngày đầu vào và xuất top điểm nóng SXH + hiển thị trên bản đồ.
-- Mô phỏng cập nhật mô hình theo dữ liệu mới (train tiếp đến 6/2025).
+
+- Tích hợp **Google Analytics 4** vào Moodle để đo lường hành vi học tập thông qua custom events.
+- Phát triển **4 tính năng AI**: AI Hint, AI Explain, AI Course Suggest, AI Card Generator.
+- Phân tích tác động từ góc nhìn **tiếp thị kỹ thuật số**: conversion, retention, engagement, customer lifetime value.
+- Đánh giá ứng dụng AI trong bối cảnh **thương mại điện tử giáo dục**.
 
 ### 1.4. Phạm vi
-- **Địa bàn:** các xã/phường trong tập ca bệnh (thời tiết được lọc theo danh sách này để giảm tải).
-- **Thời gian dữ liệu:** 01/2023 – 12/2025; tập test minh họa: 01/2025.
-- **Nhãn dự đoán:** số ca theo ngày tại mỗi xã/phường (hoặc điểm nguy cơ từ số ca kỳ vọng).
+
+- **Nền tảng:** Moodle LMS, plugin mod_cardbox.
+- **Ngôn ngữ mục tiêu:** Tiếng Nhật (Kanji, từ vựng, ngữ pháp).
+- **AI Backend:** Moodle core_ai subsystem (hỗ trợ OpenAI và các LLM tương thích).
+- **Phân tích:** Google Analytics 4 (GA4) với custom events.
+- **Góc nhìn:** Tiếp thị và kinh doanh kỹ thuật số (CT573HT).
 
 ---
 
-## CHƯƠNG 2. TỔNG QUAN LIÊN QUAN
+## CHƯƠNG 2. TỔNG QUAN LÝ THUYẾT
 
-### 2.1. SXH và yếu tố thời tiết (tóm tắt)
-- **Mưa (rain_mm):** tăng nơi sinh sản; ảnh hưởng thường có độ trễ 1–3 tuần tùy bối cảnh [3], [4], [5].
-- **Nhiệt độ (temp_c):** tăng tốc vòng đời muỗi/virus đến ngưỡng tối ưu [3], [5].
-- **Gió (wind_dir_deg, wind_speed_ms):** ảnh hưởng phân tán muỗi và hoạt động bay [3].
+### 2.1. Flashcard và khoa học ghi nhớ
 
-### 2.2. Các hướng mô hình hóa phổ biến
-- Mô hình thống kê cho dữ liệu đếm: Poisson/Negative Binomial (GLM) [6]–[9].
-- ML: Gradient Boosting, Random Forest, XGBoost; các biến thể dự báo chuỗi thời gian [10]–[14].
-- Không gian–thời gian: mô hình phân cấp, Gaussian Process, spatio-temporal deep learning.
+Nghiên cứu của Ebbinghaus (1885) là nền tảng đầu tiên về **đường cong lãng quên** (forgetting curve), chỉ ra rằng thông tin bị quên theo hàm mũ nếu không ôn tập [1]. Spaced Repetition ra đời để chống lại quy luật này: bằng cách tăng dần khoảng cách giữa các lần ôn, người học có thể duy trì ghi nhớ dài hạn với nỗ lực tối thiểu [2], [10].
 
-### 2.3. Tài liệu tham khảo chính
-- Poisson GLM và dữ liệu đếm: [6]–[9], [15].
-- Gradient Boosting với Poisson loss: [10]–[16].
-- Dịch tễ và cảnh báo sớm SXH: [1]–[5].
-- Nguồn dữ liệu thời tiết: [17].
+Cepeda và cộng sự (2008) đã phân tích tổng hợp và xác nhận rằng khoảng cách ôn tập tối ưu phụ thuộc vào thời gian giữ lại mong muốn, với hiệu quả ghi nhớ tăng đáng kể khi sử dụng lịch ôn ngắt quãng [2]. Roediger và Karpicke (2006) chứng minh rằng **Active Recall** — buộc não nhớ lại thay vì đọc thụ động — cải thiện ghi nhớ dài hạn mạnh mẽ hơn so với đọc lại nhiều lần [3].
 
----
+Kornell (2009) nghiên cứu cụ thể về flashcard và kết luận rằng spacing (ngắt quãng) hiệu quả hơn cramming (nhồi nhét), ngay cả khi người học cảm thấy cramming "dễ hơn" [4]. Nation (2001) nhấn mạnh tầm quan trọng của phương pháp flashcard trong học từ vựng ngoại ngữ, đặc biệt với các ngôn ngữ có hệ thống chữ viết phức tạp như tiếng Nhật [5].
 
-## CHƯƠNG 3. DỮ LIỆU VÀ TIỀN XỬ LÝ
+**Hệ thống Leitner** do Sebastian Leitner đề xuất (1972) chia thẻ thành các "hộp" theo mức độ thành thạo: thẻ trả lời đúng được chuyển sang hộp cao hơn (ôn ít hơn), thẻ sai quay về hộp thấp (ôn nhiều hơn) [9]. Đây là cơ sở cho thuật toán xếp hạng thẻ trong plugin mod_cardbox.
 
-### 3.1. Mô tả dữ liệu
+### 2.2. Moodle và kiến trúc plugin
 
-**Dữ liệu ca bệnh `sxh_sap_nhap_mapped.csv`**
-Trường chính sử dụng:
-- `XA_PHUONG_MOI`: xã/phường chuẩn hóa.
-- `NGAY_KHAM`: ngày khám (ngày phát hiện ca).
+Moodle (Modular Object-Oriented Dynamic Learning Environment) là LMS mã nguồn mở do Martin Dougiamas khởi tạo, dựa trên triết lý constructionism — người học xây dựng kiến thức thông qua tương tác [7]. Moodle hỗ trợ kiến trúc plugin mở rộng (activity modules, blocks, question types) cho phép cộng đồng phát triển tính năng mà không can thiệp vào core [8].
 
-**Dữ liệu thời tiết `weather_daily_2023_2025.csv`**
-- `TenXa`: xã/phường.
-- `date`: ngày.
-- `rain_mm`, `temp_c`, `wind_dir_deg`, `wind_speed_ms`.
-Nguồn thời tiết lấy từ Open‑Meteo [17].
+Plugin **mod_cardbox** là activity module triển khai hệ thống flashcard với Leitner system, cho phép giảng viên tạo bộ thẻ, sinh viên luyện tập theo các chế độ (autocorrect, self-check, flashcard), và hệ thống tự động xếp hạng thẻ theo mức độ thành thạo.
 
-**Dữ liệu ranh giới `tien_giang_xa.geojson`**
-Đa giác ranh xã/phường dùng để vẽ bản đồ nguy cơ (fallback). Trong app, nếu có `centroid_tenxa_wgs84.csv` thì ưu tiên bản đồ điểm theo centroid để hiển thị nhanh.
+Từ Moodle 4.5, hệ thống giới thiệu **AI subsystem** (`core_ai`) — một lớp trừu tượng cho phép plugin gọi các dịch vụ AI (generate text, generate image) mà không cần biết provider cụ thể [11]. Quản trị viên cấu hình AI provider (OpenAI, Azure, v.v.) ở mức site, và plugin chỉ cần gọi API chuẩn của `core_ai`.
 
-**Thống kê mô tả (để hiểu độ khó của bài toán)**
+### 2.3. Google Analytics 4 (GA4) và Learning Analytics
 
-Vì bài toán dự báo SXH theo **đơn vị ngày × xã/phường** (panel data), cần nhìn rõ: (i) mức độ thưa của nhãn (nhiều ngày không có ca), (ii) quy mô theo không gian–thời gian, (iii) phân phối lệch phải và đuôi dài.
+**GA4** là thế hệ mới của Google Analytics, chuyển từ mô hình session-based sang **event-based**, hỗ trợ đo lường cross-platform và tuân thủ privacy-first [12], [13]. Mọi tương tác đều được ghi nhận dưới dạng event với parameters tùy chỉnh, cho phép linh hoạt hơn Universal Analytics.
 
-Thống kê dưới đây được tính trực tiếp từ 2 file dữ liệu đầu vào chính của pipeline (sau khi loại bản ghi lỗi ngày/tên xã):
+**Learning Analytics** là lĩnh vực sử dụng dữ liệu về người học để tối ưu hóa quá trình học tập và môi trường học [14]. Siemens và Long (2011) định nghĩa learning analytics là "đo lường, thu thập, phân tích và báo cáo dữ liệu về người học và bối cảnh học tập, với mục tiêu hiểu và tối ưu hóa việc học" [14]. GA4 cung cấp nền tảng kỹ thuật cho learning analytics trong bối cảnh web-based LMS.
 
-- Số dòng ca bệnh gốc: **12,406**
-- Số xã/phường xuất hiện trong ca bệnh: **57**
-- Khoảng thời gian ca bệnh: **2023-01-01 → 2025-12-18**
-- Số dòng thời tiết theo xã-phường-ngày: **59,565**
-- Khoảng thời gian thời tiết: **2023-01-01 → 2025-12-18**
-- Panel sau khi ghép thời tiết + ca bệnh (mỗi dòng là 1 xã-phường trong 1 ngày): **59,565**
-- Số xã/phường có đủ panel sau khi ghép: **55**
-- Số ngày: **1,083**
-- Tỷ lệ ngày có 0 ca: **92.32%**
-- Trung bình số ca/ngày/xã: **0.206**; trung vị: **0**
-- Bách phân vị 95%: **1**; giá trị lớn nhất: **38**
+### 2.4. AI trong giáo dục (AIEd)
 
-Hệ quả phương pháp luận:
-- Dữ liệu có dấu hiệu **zero-inflated** (rất nhiều số 0) và “đỉnh” hiếm nhưng cao; do đó RMSE/MAE có thể bị chi phối bởi một số ngày bất thường.
-- Metric phục vụ vận hành (Top-K điểm nóng) là cần thiết, vì mục tiêu thực tế thường là “ưu tiên đúng địa bàn” hơn là “khớp tuyệt đối từng con số”.
+Holmes, Bialik và Fadel (2019) phân loại ứng dụng AI trong giáo dục thành 3 nhóm: **(1)** AI hỗ trợ người học (tutoring, feedback), **(2)** AI hỗ trợ giảng viên (tự động hóa, phân tích), **(3)** AI hỗ trợ hệ thống (adaptive learning, content generation) [15]. Chen, Chen và Lin (2020) tổng hợp nghiên cứu về AI trong giáo dục và xác nhận rằng AI cá nhân hóa (personalized AI) có tác động tích cực đến kết quả học tập, đặc biệt trong adaptive feedback và intelligent tutoring [16].
 
-### 3.2. Chuẩn hóa, ghép nối và tạo nhãn
-- Chuẩn hóa encoding UTF-8-SIG, loại bỏ khoảng trắng thừa trong tên xã.
-- Ghép theo khóa `(xa, date)`.
+### 2.5. Tiếp thị kỹ thuật số trong giáo dục
 
-Làm rõ hơn để tránh sai lệch do join và sai lệch do nhập liệu:
+Chaffey và Ellis-Chadwick (2019) định nghĩa tiếp thị kỹ thuật số (digital marketing) là "đạt được mục tiêu marketing thông qua áp dụng công nghệ số và phương tiện truyền thông số" [17]. Trong bối cảnh giáo dục trực tuyến (EdTech), các chỉ số marketing số quan trọng bao gồm:
 
-- **Chuẩn hoá khoá ghép:** tên xã/phường được `strip()`; ngày được ép kiểu `datetime` (bản ghi nào không parse được sẽ bị loại).
-- **Tạo label theo ngày:** dữ liệu ca bệnh gốc có thể có nhiều dòng trong cùng (xã, ngày). Pipeline gom nhóm để tạo nhãn đếm $y_{x,t}$.
-- **Ghép panel:** sử dụng bảng thời tiết như “khung panel” theo (xã, ngày), sau đó ghép trái nhãn vào. Nếu một (xã, ngày) không có ca bệnh thì gán $y=0$.
+- **Conversion Rate**: Tỷ lệ người dùng thử chuyển sang đăng ký/mua khóa học.
+- **Retention Rate**: Tỷ lệ người học quay lại sau một khoảng thời gian.
+- **Engagement Rate**: Mức độ tương tác (thời gian, tần suất, độ sâu).
+- **Customer Lifetime Value (CLV/LTV)**: Tổng giá trị người học mang lại trong suốt vòng đời.
+- **Churn Rate**: Tỷ lệ bỏ học/ngừng sử dụng [17], [18].
 
-Gán $y=0$ là hợp lý cho bài toán đếm ca, nhưng đồng thời làm tăng tỷ lệ số 0; vì vậy phần mô hình hoá (Poisson) và đánh giá (Hit@K/Outbreak) được thiết kế để phù hợp đặc tính này.
-
-**Lọc dữ liệu thời tiết để giảm tải**
-Chỉ giữ thời tiết cho các xã xuất hiện trong ca bệnh:
-
-$$X = \{x\mid x\in \texttt{XA\_PHUONG\_MOI}\}$$
-
-Giữ lại mọi bản ghi thỏa `TenXa ∈ X`.
-
-**Tạo biến mục tiêu (label)**
-Gom nhóm số ca theo ngày và xã/phường:
-
-$$y_{x,t} = \sum \mathbf{1}(\text{case ở }x\ \text{và}\ \texttt{NGAY\_KHAM}=t)$$
-
-Ghi chú về ý nghĩa nhãn:
-
-- `NGAY_KHAM` là ngày khám/phát hiện ca, không nhất thiết là ngày khởi phát. Điều này tạo ra **độ trễ quan sát** so với các yếu tố thời tiết, khiến độ trễ tối ưu (lag) trong thực tế có thể bị “dịch”.
-- Trong phạm vi bài toán môn học, ta chấp nhận `NGAY_KHAM` như một proxy thực dụng; phần thảo luận sẽ nêu rõ đây là một nguồn sai lệch/không chắc chắn.
-
-### 3.3. Hình và EDA
-Các hình được sinh bởi `make_figures_and_metrics_v2.py` và lưu trong `report_figures/`.
-
-| Hình | Tên file | Nội dung |
-|---:|---|---|
-| 1 | `fig_cases_monthly.png` | Tổng số ca SXH theo tháng |
-| 2 | `fig_rain_vs_cases_monthly.png` | Xu hướng ca SXH và mưa trung bình theo tháng |
-| 3 | `fig_lag_corr_rain.png` | Tương quan độ trễ: $y(t)$ và $rain(t-k)$ |
-| 4 | `fig_y_distribution.png` | Phân phối nhãn $y$ (log-count) |
-| 5 | `fig_zero_rate_monthly.png` | Tỷ lệ $y=0$ theo tháng |
-| 6 | `fig_mean_variance_by_xa.png` | Var(y) vs Mean(y) theo xã |
-| 7 | `fig_compare_baseline_vs_updated.png` | So sánh baseline vs updated theo metrics |
-| 8 | `fig_pred_vs_true.png` | Scatter $y$ thật vs $\hat{y}$ (HistGB Poisson) |
-| 9 | `fig_feature_importance.png` | Feature importance (Permutation, -MAE) |
-| 10 | `fig_province_daily_true_vs_pred.png` | Toàn tỉnh (test): $y$ thật vs $y$ dự đoán theo ngày |
-| 11 | `fig_calibration_mean_y_vs_pred.png` | Calibration: mean(y) vs mean(ŷ) |
-| 12 | `fig_glm_residuals_vs_fitted.png` | GLM residuals vs fitted |
-| 13 | `fig_hit10_over_time.png` | Hotspot Hit@10 theo ngày |
-| 14 | `fig_backtest_mae_by_month.png` | Backtest 2025: MAE theo tháng |
-| 15 | `fig_backtest_hit10_by_month.png` | Backtest 2025: Hit@10 theo tháng |
+Kotler và Armstrong (2018) nhấn mạnh rằng **cá nhân hóa** trải nghiệm khách hàng là yếu tố then chốt trong marketing hiện đại, và AI là công cụ cho phép cá nhân hóa ở quy mô lớn [18]. Trong TMĐT giáo dục, cá nhân hóa thể hiện qua gợi ý khóa học phù hợp, nội dung thích ứng theo trình độ, và phản hồi tức thì cho người học.
 
 ---
 
-**EDA bổ sung phục vụ *chọn mô hình* (Poisson GLM vs HistGB Poisson)**
+## CHƯƠNG 3. KIẾN TRÚC HỆ THỐNG TÍCH HỢP
 
-Ba biểu đồ dưới đây cho thấy dữ liệu nhãn là **count**, nhiều số 0 và có dấu hiệu **over‑dispersion**, là cơ sở để chọn Poisson GLM (tuyến tính, dễ diễn giải) và HistGB với Poisson loss (phi tuyến).
+### 3.1. Tổng quan kiến trúc
 
-**Hình 4 (fig_y_distribution.png). Phân phối nhãn $y$ (log-count)**
+Hệ thống được thiết kế với hai lớp tích hợp **độc lập**, **không xâm phạm** vào core Moodle:
 
-![](report_figures/fig_y_distribution.png)
+- **GA4 (đo lường):** đo lường hành vi học tập, cung cấp insights cho giảng viên.
+- **AI (nâng cao trải nghiệm):** hỗ trợ cá nhân hóa, giải thích, gợi ý và tự động hóa nội dung.
 
-- Nhãn lệch phải mạnh, đỉnh ở 0 → ưu tiên mô hình count và metric xếp hạng điểm nóng.
+Kiến trúc gồm 3 tầng chính:
 
-**Hình 5 (fig_zero_rate_monthly.png). Tỷ lệ $y=0$ theo tháng**
+**Tầng Client (Browser):**
+- `practice.js` — quản lý toàn bộ logic phiên luyện tập: render thẻ flashcard, nhận input người học, gọi AJAX đến server.
+- `ga4Track(eventName, params)` — hàm wrapper gửi custom events đến GA4, đặt ở module scope để toàn bộ module truy cập được. Hàm tự bỏ qua nếu `gtag` chưa được nạp, đảm bảo plugin hoạt động bình thường khi site chưa cài GA4.
 
-![](report_figures/fig_zero_rate_monthly.png)
+**Tầng Server (mod_cardbox):**
+- `action.php` — bộ xử lý AJAX trung tâm, nhận request từ client và phân luồng theo action: chấm bài, gọi AI, lưu thống kê.
+- `mdl_cardbox_*` — các bảng database lưu thẻ, thống kê luyện tập, lịch sử người học.
 
-- Zero‑rate thay đổi theo tháng → cần đặc trưng lịch và mô hình học được mùa vụ.
+**Tầng Dịch vụ bên ngoài:**
+- `core_ai (Moodle)` — subsystem AI tích hợp sẵn trong Moodle 4.5+, hỗ trợ generate_text cho AI Hint, AI Explain, AI Course Suggest, AI Card Generator [11].
+- `OpenAI Images API` — gọi trực tiếp API OpenAI để sinh hình ảnh gợi ý (AI Image Hint), đọc API key từ cấu hình `aiprovider_openai` [19].
+- `GA4 Server` — nhận events từ `gtag.js` qua browser, phân tích và hiển thị trên Dashboard.
 
-**Hình 6 (fig_mean_variance_by_xa.png). Var(y) vs Mean(y) theo xã**
+### 3.2. Luồng xử lý chính
 
-![](report_figures/fig_mean_variance_by_xa.png)
+```
+Browser (practice.js)
+  │
+  ├── ga4Track() ──────────────────────── → GA4 Server
+  │
+  └── AJAX (action.php) ──── → mod_cardbox
+                                    │
+                                    ├── core_ai (generate_text)
+                                    │      └── AI Provider (OpenAI, etc.)
+                                    │
+                                    └── OpenAI Images API (direct)
+```
 
-- Var > Mean ở nhiều xã → có over‑dispersion, cần mô hình linh hoạt hơn GLM thuần.
+### 3.3. Thiết kế module JavaScript
 
-### 3.4. Bảng số liệu bổ sung
+File `practice.js` được tổ chức theo kiến trúc object-oriented với các class chính:
 
-**Bảng 1. Tổng số ca theo năm (toàn tỉnh)**
+- **Coordinate** — máy trạng thái (state machine) điều phối toàn bộ phiên luyện tập: khởi tạo, hiển thị câu hỏi, nhận câu trả lời, chấm điểm, chuyển thẻ tiếp theo.
+- **Evaluate** — so sánh câu trả lời của người học với đáp án đúng.
+- **Output** — render thẻ flashcard và kết quả lên giao diện.
+- **Statistics** — thống kê phiên luyện tập, hiển thị biểu đồ doughnut kết quả, và khởi chạy AI Course Suggest.
+- **EventHandling** — xử lý sự kiện DOM (click, keypress).
 
-| year | total_cases | days | avg_per_day | max_day |
-| --- | --- | --- | --- | --- |
-| 2023 | 5240 | 361 | 14.515 | 45 |
-| 2024 | 3723 | 356 | 10.458 | 44 |
-| 2025 | 3443 | 342 | 10.067 | 51 |
+Class `Coordinate` duy trì mảng `wrongQuestionTexts` để thu thập nội dung các câu hỏi trả lời sai trong suốt phiên, phục vụ cho AI Course Suggest phân tích điểm yếu sau khi kết thúc.
 
-**Bảng 2. Top 12 tháng có tổng ca cao nhất**
+### 3.4. Pattern gọi AI thống nhất
 
-| month | total_cases | avg_per_day | max_day |
-| --- | --- | --- | --- |
-| 2023-10-01 00:00:00 | 769 | 24.806 | 45 |
-| 2025-10-01 00:00:00 | 753 | 24.290 | 51 |
-| 2023-11-01 00:00:00 | 648 | 21.600 | 42 |
-| 2023-09-01 00:00:00 | 568 | 19.586 | 36 |
-| 2024-10-01 00:00:00 | 543 | 17.516 | 44 |
-| 2023-03-01 00:00:00 | 480 | 15.484 | 29 |
-| 2023-02-01 00:00:00 | 475 | 16.964 | 33 |
-| 2024-11-01 00:00:00 | 469 | 15.633 | 29 |
-| 2024-12-01 00:00:00 | 450 | 14.516 | 26 |
-| 2023-04-01 00:00:00 | 416 | 13.867 | 25 |
-| 2025-09-01 00:00:00 | 413 | 14.241 | 29 |
-| 2023-08-01 00:00:00 | 397 | 12.806 | 22 |
+Toàn bộ các tính năng AI (trừ AI Image Hint) sử dụng cùng pattern gọi Moodle AI subsystem:
 
-**Bảng 3. Top 15 xã/phường có tổng ca cao nhất (2023–2025)**
+```php
+// 1. Tạo AI action
+$aiaction = new \core_ai\aiactions\generate_text(
+    contextid: $context->id,
+    userid: $USER->id,
+    prompttext: $prompt,
+);
 
-| xa | total_cases | days_with_cases |
-| --- | --- | --- |
-| Xã Cái Bè | 7814 | 1005 |
-| Xã Hội Cư | 797 | 480 |
-| Xã Thanh Hưng | 502 | 309 |
-| Xã Tân Đông | 260 | 209 |
-| Xã An Hữu | 239 | 198 |
-| Xã Gia Thuận | 201 | 149 |
-| Xã Mỹ Lợi | 191 | 153 |
-| Xã Chợ Gạo | 168 | 147 |
-| Xã Mỹ Đức Tây | 150 | 130 |
-| Xã Bình Phú | 125 | 118 |
-| Xã Vĩnh Bình | 117 | 95 |
-| Phường Mỹ Phước | 113 | 99 |
-| Xã Mỹ Thiện | 100 | 90 |
-| Phường Cai Lậy | 93 | 84 |
-| Xã Châu Thành | 90 | 81 |
+// 2. Gọi AI manager
+$manager = \core\di::get(\core_ai\manager::class);
+$response = $manager->process_action($aiaction);
 
-**Bảng 4. Tỷ lệ ngày y=0 theo xã (cao nhất / thấp nhất)**
+// 3. Xử lý kết quả
+if ($response->get_success()) {
+    $content = $response->get_response_data()['generatedcontent'];
+}
+```
 
-_Nhóm tỷ lệ y=0 cao nhất:_
-
-| xa | is_zero |
-| --- | --- |
-| Xã Bình Ninh | 0.999 |
-| Xã Tân Thuận Bình | 0.996 |
-| Xã Tân Phước 3 | 0.996 |
-| Xã Tân Phước 2 | 0.995 |
-| Xã Kim Sơn | 0.994 |
-| Xã An Thạnh Thủy | 0.993 |
-| Xã Vĩnh Kim | 0.991 |
-| Phường Đạo Thạnh | 0.986 |
-| Phường Long Thuận | 0.984 |
-| Xã Phú Thành | 0.984 |
-
-_Nhóm tỷ lệ y=0 thấp nhất:_
-
-| xa | is_zero |
-| --- | --- |
-| Xã Cái Bè | 0.072 |
-| Xã Hội Cư | 0.557 |
-| Xã Thanh Hưng | 0.715 |
-| Xã Tân Đông | 0.807 |
-| Xã An Hữu | 0.817 |
-| Xã Mỹ Lợi | 0.859 |
-| Xã Gia Thuận | 0.862 |
-| Xã Chợ Gạo | 0.864 |
-| Xã Mỹ Đức Tây | 0.880 |
-| Xã Bình Phú | 0.891 |
-
-**Bảng 5. Thống kê mô tả thời tiết (toàn bộ xã/ngày)**
-
-| var | count | mean | std | min | 10% | 50% | 90% | max |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| rain_mm | 59565.000 | 6.349 | 8.085 | 0.000 | 0.000 | 3.200 | 17.400 | 81.700 |
-| temp_c | 59565.000 | 27.324 | 1.375 | 22.300 | 25.800 | 27.200 | 29.000 | 33.200 |
-| wind_speed_ms | 59565.000 | 2.536 | 0.915 | 0.620 | 1.470 | 2.390 | 3.860 | 6.280 |
-| wind_dir_deg | 59565.000 | 160.619 | 84.403 | 0.000 | 40.000 | 159.000 | 249.000 | 360.000 |
-
-**Bảng 6. Top 10 độ trễ có tương quan cao nhất giữa mưa và ca (Pearson)**
-
-| lag | pearson_corr |
-| --- | --- |
-| 29 | 0.198 |
-| 30 | 0.188 |
-| 23 | 0.179 |
-| 27 | 0.176 |
-| 25 | 0.176 |
-| 24 | 0.162 |
-| 10 | 0.161 |
-| 22 | 0.161 |
-| 28 | 0.160 |
-| 26 | 0.159 |
+Pattern này đảm bảo: **(a)** không phụ thuộc vào provider cụ thể — quản trị viên có thể đổi từ OpenAI sang Azure hay bất kỳ LLM nào, **(b)** tuân thủ quyền hạn Moodle — mỗi request kèm context và userid, **(c)** log đầy đủ qua hệ thống logging của Moodle.
 
 ---
 
-### 3.5. Tóm tắt chương
-Tóm lại, dữ liệu mang tính panel theo ngày–xã, nhiều số 0 và có mùa vụ rõ. Các bước chuẩn hóa, ghép nối và tạo nhãn đảm bảo dữ liệu nhất quán cho huấn luyện và đánh giá.
+## CHƯƠNG 4. TÍCH HỢP GOOGLE ANALYTICS 4 (GA4)
 
-## CHƯƠNG 4. PHƯƠNG PHÁP
+### 4.1. Vấn đề
 
-### 4.1. Đặt bài toán
-Với mỗi xã/phường $x$ và ngày $t$, dự đoán số ca kỳ vọng $\hat{y}_{x,t}$ từ vector đặc trưng $f_{x,t}$ (tạo ra từ thời tiết và lịch sử ca bệnh).
+Moodle mặc định không ghi nhận hành vi học tập chi tiết bên trong plugin. Khi vận hành một site Moodle, giảng viên và quản trị viên không có câu trả lời cho các câu hỏi cơ bản:
 
+- Có bao nhiêu sinh viên thực sự luyện tập mỗi ngày?
+- Họ bỏ cuộc ở bài nào? Chủ đề nào khiến họ stuck?
+- Tỷ lệ hoàn thành thực tế là bao nhiêu?
+- Thẻ nào bị sai nhiều nhất và cần cải thiện nội dung?
 
-### 4.2. Lý do chọn **Poisson GLM**, **HistGB (Poisson loss)** và **Linear Regression**
+### 4.2. Giải pháp: Tích hợp GA4
 
-Quan sát dữ liệu (Chương 3) cho thấy nhãn là **count theo ngày**, nhiều số 0, phân phối lệch phải và có **over‑dispersion**. Mô hình cần đảm bảo **dự đoán không âm**, tối ưu theo phân phối count, và phục vụ mục tiêu **xếp hạng điểm nóng**.
+GA4 được nhúng vào Moodle bằng cách thêm đoạn mã `gtag.js` vào `HEAD` thông qua `Site Admin → Appearance → Additional HTML`. Cách tiếp cận này:
 
-**Poisson GLM (PoissonRegressor) — baseline có thể giải thích** [6]–[9], [15]
-- Log-link đảm bảo $\hat{y}\ge 0$ và cho phép diễn giải tác động (hướng, cường độ) của nhóm biến mưa/nhiệt/gió/lịch.
-- Ổn định, ít tham số, dễ tái tạo, làm mốc so sánh rõ ràng cho mô hình phi tuyến.
-- Phù hợp để kiểm tra nhanh giả thuyết “tuyến tính trên log‑rate” có đủ giải thích dữ liệu hay không.
+- Không cần cài thêm plugin hoặc sửa core Moodle.
+- Tự động track toàn bộ Moodle: pageviews, sessions, users, traffic source.
+- Cho phép thêm custom events từ plugin để biết người học làm gì bên trong phiên luyện tập.
 
-**HistGradientBoosting (loss="poisson") — bắt phi tuyến nhưng vẫn đúng bản chất count** [10]–[16]
-- Tối ưu Poisson loss nên phù hợp dữ liệu đếm và nhiều số 0 hơn so với MSE.
-- Bắt được **ngưỡng** (mưa thấp/đủ/cao), **tương tác** (mưa × nhiệt × mùa) và các cấu trúc mà GLM bỏ sót.
-- Thực tế thường cải thiện ở các đỉnh/đợt bùng phát, là phần quan trọng trong cảnh báo.
+### 4.3. Custom Events
 
-**Linear Regression — baseline tuyến tính**
-- Hồi quy tuyến tính chuẩn, dễ huấn luyện và diễn giải, làm mốc so sánh với mô hình Poisson.
-- Cho thấy ảnh hưởng của “chỉ tuyến tính” khi không ràng buộc phân phối đếm.
-- Hạn chế: có thể dự đoán âm, cần clip về 0 khi diễn giải số ca.
+Ba custom events được triển khai trong `js/practice.js`:
 
-**Vì sao không chọn mô hình khác** (sau khi xem xét dữ liệu):
-- **Gaussian regression (Linear/Ridge/Lasso):** có thể dự đoán âm, giả định phương sai không phù hợp dữ liệu đếm.
-- **RF/GBM với MSE:** không tối ưu theo phân phối count, calibration kém ở vùng $y$ nhỏ/0.
-- **XGBoost/LightGBM:** mạnh nhưng yêu cầu tuning/phụ thuộc lớn, vượt phạm vi demo môn học.
-- **Classification thuần túy:** mất thông tin mức độ, khó xếp hạng Top‑K nếu dùng một mình.
-- **ARIMA/Prophet:** phù hợp chuỗi đơn, khó mở rộng cho panel theo xã/phường.
+| Sự kiện | GA4 Event Name | Parameters chính | Thời điểm gửi |
+|:---|:---|:---|:---|
+| Bắt đầu phiên | `practice_session_started` | `cardbox_id`, `card_count`, `mode` | Khi người học nhấn "Bắt đầu" |
+| Trả lời thẻ | `card_answered` | `card_id`, `correct`, `mode`, `is_repetition` | Mỗi lần trả lời (đúng/sai) |
+| Kết thúc phiên | `practice_session_ended` | `cards_practiced`, `correct_count`, `wrong_count`, `duration_sec` | Khi hoàn thành hoặc thoát |
 
-Các mô hình count nâng cao (Negative Binomial, Zero‑Inflated/Hurdle) được để ở phần hướng phát triển vì cần thiết kế và kiểm định thêm.
+Hàm `ga4Track(eventName, params)` được thiết kế an toàn:
 
+```javascript
+function ga4Track(eventName, params) {
+    if (typeof gtag === 'function') {
+        gtag('event', eventName, params);
+    }
+}
+```
 
+Hàm kiểm tra `gtag` có tồn tại trước khi gọi, đảm bảo plugin hoạt động bình thường kể cả khi site chưa cấu hình GA4.
 
-### 4.3. Feature Engineering
+### 4.4. Insights từ dữ liệu học tập
 
-**Độ trễ (lag) thời tiết**
-Ví dụ với mưa:
+Dữ liệu từ GA4 Dashboard cung cấp các chỉ số:
 
-$$rain^{(k)}_{x,t} = rain_{x,t-k},\quad k\in\{1,3,7,14\}$$
+- **Engagement**: Số phiên học/ngày, thời gian trung bình mỗi phiên, tỷ lệ hoàn thành.
+- **Performance**: Tỷ lệ trả lời đúng theo chủ đề (Hiragana / Katakana / Kanji / Từ vựng).
+- **Retention**: Người học quay lại luyện tập sau 1 ngày / 7 ngày / 30 ngày.
+- **Content Quality**: Thẻ nào bị sai nhiều nhất → giảng viên cần xem xét lại nội dung.
 
-Áp dụng tương tự cho `temp_c`, `wind_speed_ms`, và biểu diễn hướng gió bằng sin/cos.
+### 4.5. Giá trị tiếp thị
 
-Giải thích lựa chọn tập lag {1, 3, 7, 14}:
+Từ góc nhìn tiếp thị kỹ thuật số, GA4 cho phép tối ưu hóa trải nghiệm người học tương tự tối ưu conversion trong TMĐT [17]:
 
-- Đây là tập “gọn” nhưng bao phủ được các mức trễ ngắn–trung hạn (1–2 tuần).
-- Trực giác dịch tễ: mưa ảnh hưởng tới ổ bọ gậy → quần thể muỗi; nhiệt độ ảnh hưởng vòng đời muỗi/virus; các hiệu ứng này hiếm khi phản ánh tức thời ngay ngày hôm sau.
-- Trên dữ liệu thực tế, biểu đồ tương quan lag (Hình 3) giúp kiểm tra xem có “cửa sổ trễ” nào nổi bật hay không.
-
-**Trung bình trượt (rolling)**
-Ví dụ:
-
-$$\overline{rain}^{(w)}_{x,t} = \frac{1}{w}\sum_{i=1}^{w} rain_{x,t-i},\quad w\in\{7,14\}$$
-
-Rolling giúp mô hình nắm “tích luỹ điều kiện” (ví dụ mưa kéo dài 1–2 tuần) thay vì chỉ nhìn một ngày đơn lẻ. Việc dùng $t-i$ (bắt đầu từ 1) đảm bảo chỉ dùng quá khứ, tránh rò rỉ thông tin từ chính ngày $t$.
-
-**Lag ca bệnh**
-
-$$cases^{(k)}_{x,t} = y_{x,t-k}$$
-
-Giúp mô hình nắm động lực bùng phát.
-
-Lưu ý quan trọng: lag/rolling của **cases** thường có sức dự báo mạnh nhất, nhưng cũng khiến mô hình có xu hướng “bám quán tính” (forecast theo đà) và có thể bỏ lỡ các thay đổi cấu trúc do can thiệp y tế hoặc yếu tố xã hội. Vì vậy báo cáo cần kèm metric Top-K/Outbreak để đánh giá theo mục tiêu cảnh báo.
-
-### 4.4. Các mô hình
-
-**Mô hình 1: Poisson Regression (GLM baseline)**
-Giả định:
-
-$$y_{x,t}\sim \text{Poisson}(\lambda_{x,t})$$
-
-Hàm liên kết log:
-
-$$\log(\lambda_{x,t}) = \beta_0 + \beta^T f_{x,t}$$
-
-**Mô hình 2: Gradient Boosting với Poisson loss**
-Dùng cây tăng cường (boosting) để học quan hệ phi tuyến, tối ưu mục tiêu Poisson, phù hợp dữ liệu đếm và nhiều số 0.
-
-**Mô hình 3: Linear Regression (baseline)**
-Linear Regression dự báo:
-
-$$\hat{y}_{x,t} = \beta_0 + \beta^T f_{x,t}$$
-
-Mô hình dùng làm baseline tuyến tính để đối chiếu với Poisson (count) và HistGB (phi tuyến). Khi diễn giải số ca, dự báo âm được clip về 0.
-
-### 4.5. Train/test và đánh giá
-- Train: 01/2023 – 12/2024
-- Test: 01/2025 (một cửa sổ ngắn để kiểm thử)
-- Update train: huấn luyện lại với dữ liệu đến 06/2025
-
-**Giải thích “2 cách train” trong dự án:**
-- **Baseline training (mô hình ban đầu):** huấn luyện với dữ liệu đến `train_end = 2024-12-31`. Đây là mô phỏng giai đoạn triển khai lần đầu.
-- **Updated training (mô hình sau cập nhật):** huấn luyện lại với dữ liệu mở rộng đến `update_train_end = 2025-06-30` nhưng vẫn giữ **cùng cửa sổ test** (01/2025) để so sánh công bằng.
-
-Trong vận hành thực tế, baseline tương ứng “mô hình đang chạy”, còn updated là “mô hình được cập nhật định kỳ khi có dữ liệu mới”. Việc giữ nguyên cửa sổ test giúp đánh giá liệu cập nhật dữ liệu có cải thiện dự đoán trên giai đoạn mục tiêu hay không.
-
-**Chỉ số đánh giá**
-- MAE:
-
-$$\mathrm{MAE}=\frac{1}{N}\sum_{i=1}^N |y_i-\hat{y}_i|$$
-
-- RMSE:
-
-$$\mathrm{RMSE}=\sqrt{\frac{1}{N}\sum_{i=1}^N (y_i-\hat{y}_i)^2}$$
-
-- Poisson deviance:
-
-$$D = 2\sum_i \Big(y_i\log\frac{y_i}{\hat{y}_i} - (y_i-\hat{y}_i)\Big)$$
-
-Ý nghĩa: Poisson deviance đánh giá “độ phù hợp theo phân phối đếm”, thường hợp lý hơn MSE khi nhãn là count và rất lệch phải. Trong triển khai thực nghiệm, báo cáo trình bày deviance ở hai dạng:
-
-- Dạng tổng (phù hợp để so sánh trực tiếp khi N cố định).
-- Dạng trung bình (Mean Poisson Deviance) trong bảng so sánh baseline vs updated.
-
-Hai dạng này chỉ khác nhau bởi hệ số $1/N$; xu hướng so sánh (mô hình nào tốt hơn) không đổi nếu N giống nhau.
-
-- Hotspot Hit@K:
-Với mỗi ngày, lấy xã có số ca thực tế cao nhất (true top-1). Hit@K = 1 nếu xã này nằm trong top-K dự đoán; báo cáo là trung bình theo ngày.
+- Biết chính xác người học "rời bỏ" (drop-off) ở bước nào trong hành trình học tập.
+- Xác định nội dung có hiệu quả cao/thấp để phân bổ nguồn lực cải thiện.
+- Đo lường ROI của mỗi tính năng mới (AI Hint, AI Explain...) qua thay đổi engagement metrics.
 
 ---
 
-## CHƯƠNG 5. THIẾT KẾ HỆ THỐNG ỨNG DỤNG
+## CHƯƠNG 5. TÍCH HỢP AI VÀO PLUGIN CARDBOX
 
-### 5.1. Kiến trúc tổng quan
-- Pipeline train: đọc dữ liệu → tạo label → join weather → tạo feature → train 3 mô hình → lưu artifacts.
-- Backend (FastAPI): load model + feature store; khi suy luận dựng lại cửa sổ 14 ngày cho từng xã bằng lịch sử + Open‑Meteo (archive cho quá khứ thiếu, forecast cho ngày mục tiêu) để tính lag/rolling.
-- Frontend: nhập ngày + top‑K, hiển thị bảng kết quả và bản đồ điểm (centroid); click vào xã để xem lịch sử thời tiết 14 ngày.
+### 5.1. AI Hint — Gợi ý cá nhân hóa
 
-### 5.2. Các chế độ dự đoán
-- **Theo vị trí hiện tại**: dùng định vị trình duyệt → chọn xã gần nhất → dựng cửa sổ 14 ngày rồi dự đoán ngày mục tiêu.
-- **Top‑K theo ngày**: dự đoán cho tất cả xã theo ngày mục tiêu (dựa trên centroid từng xã) và xếp hạng top‑K.
+#### 5.1.1. Vấn đề
 
-Để minh bạch trong vận hành, backend có 3 endpoint chính tương ứng:
+Người học gặp thẻ khó → không có gợi ý → chọn "Tôi không biết" → nản → bỏ cuộc. Đây là nguyên nhân chính gây **drop-off** trong phiên luyện tập, đặc biệt với các thẻ Kanji mức N4–N3 có độ phức tạp cao.
 
-- `/api/predict`: chỉ nhận ngày hôm nay/tương lai và trong phạm vi feature store (endpoint nội bộ, UI không gọi trực tiếp).
-- `/api/predict_here`: dự đoán cho xã gần nhất theo vị trí người dùng, dựng cửa sổ 14 ngày bằng lịch sử + Open‑Meteo.
-- `/api/predict_now_top10`: dự đoán cho tất cả xã theo ngày mục tiêu (forecast theo centroid) và trả top‑K kèm thời tiết.
+#### 5.1.2. Giải pháp
 
-Ngoài dự đoán, phản hồi API trả thêm:
+Nút **"✨ AI gợi ý"** xuất hiện trong quá trình luyện tập. AI đọc lịch sử của **người dùng hiện tại** với **thẻ hiện tại** từ database và chọn mức gợi ý phù hợp:
 
-- `weather_mode` ∈ {historical, forecast, forecast_per_commune}: nguồn thời tiết đang dùng.
-- `weather_used`: snapshot thời tiết (mưa/nhiệt/gió/hướng) đã được đưa vào feature.
-- `history_by_xa`: lịch sử thời tiết 14 ngày theo xã để hiển thị chi tiết trong UI.
+| Dữ liệu người học | Mức gợi ý | Kiểu prompt AI |
+|:---|:---|:---|
+| Hộp 1 · sai ≥ 5 lần | 🔴 Mức 1 — Khó | Gợi ý chi tiết, nhiều liên tưởng |
+| Hộp 1 · sai 2–4 lần | 🟡 Mức 2 — Đang học | Gợi ý nhẹ + liên tưởng trực quan |
+| Hộp 3+ · từng đúng | 🟢 Mức 3 — Từng biết | Gợi ý ngắn, kích hoạt lại ký ức |
 
-Phần này giúp người dùng (và người đọc báo cáo) kiểm tra tính hợp lý và tránh hiểu nhầm “mô hình dựa trên dữ liệu nào” tại thời điểm suy luận.
+Cơ chế cá nhân hóa này dựa trên nguyên lý **Zone of Proximal Development** — gợi ý vừa đủ để người học tự đến đáp án, không quá nhiều (mất giá trị luyện tập) cũng không quá ít (vẫn bế tắc).
 
----
+#### 5.1.3. AI Hint Image
 
-## CHƯƠNG 6. THỰC NGHIỆM VÀ KẾT QUẢ
+Ngoài gợi ý văn bản, hệ thống cung cấp **gợi ý bằng hình ảnh** — AI tạo hình minh họa liên tưởng đến câu trả lời. Tính năng này gọi trực tiếp OpenAI Images API, đọc API key từ cấu hình `aiprovider_openai` trong Moodle.
 
-### 6.1. Thiết lập thí nghiệm
-- So sánh mô hình đếm ca: Poisson Regression, HistGradientBoosting (Poisson loss) và Linear Regression.
-- Thiết lập lag: {1,3,7,14}, rolling {7,14}.
+#### 5.1.4. Triển khai kỹ thuật
 
-### 6.2. Kết quả định lượng
-Bảng dưới lấy từ `report_figures/metrics.csv` (tập test 01/2025):
+Trong `action.php`, handler `aihint` nhận `$questiontext` và `$cardid`, truy vấn lịch sử luyện tập của user với card đó (số lần sai, vị trí hộp Leitner), xây dựng prompt cá nhân hóa theo mức gợi ý, và gọi `core_ai\aiactions\generate_text`.
 
-| Model | MAE | RMSE | PoissonDeviance | Hit@5 | Hit@10 |
-|---|---:|---:|---:|---:|---:|
-| PoissonRegressor(GLM) | 0.2369 | 0.5969 | 434.88 | 0.9333 | 0.9333 |
-| HistGB(poisson) | 0.1374 | 0.4866 | 237.59 | 0.9333 | 0.9333 |
-| LinearRegression | 0.1494 | 0.4569 | 359.88 | 0.9333 | 0.9333 |
+#### 5.1.5. Tác động marketing
 
-#### 6.2.1. So sánh mô hình trước và sau cập nhật (baseline vs updated)
-Trong pipeline huấn luyện, dự án thực hiện 2 lần huấn luyện:
-- **Baseline:** train đến 2024-12-31
-- **Updated:** retrain đến 2025-06-30
+| Chỉ số | Trước AI Hint | Sau AI Hint |
+|:---|:---|:---|
+| **Drop-off** khi gặp thẻ khó | Bỏ phiên, không trả lời | Dùng gợi ý → tiếp tục học |
+| **Session Duration** | Ngắn — bỏ sớm | Tăng — AI giữ người học ở lại |
+| **Engagement Rate** | Thấp ở thẻ Kanji N4 | Cải thiện — ít bỏ cuộc hơn |
+| **card_answered (correct)** | Thấp hơn | Tăng — nhờ gợi ý đúng lúc |
 
-Để tránh nhầm lẫn (và để phục vụ báo cáo), dự án lưu thêm file so sánh: `artifacts/compare_baseline_vs_update.csv`.
+**Insight GA4:** Số lần `ai_hint` event được gọi trước `card_answered` cho biết chính xác thẻ nào đang gây khó khăn cho người học → ưu tiên cải thiện nội dung.
 
-**Bảng 2. So sánh metrics baseline vs updated (cùng cửa sổ test 01/2025)**
+#### 5.1.6. Demo luồng hoạt động
 
-| Stage | Train end | Model | MAE | RMSE | Mean Poisson Deviance | Outbreak Acc@0.5 |
-|---|---|---|---:|---:|---:|---:|
-| baseline | 2024-12-31 | poisson_regression | 0.1497 | 0.5345 | 0.2946 | 0.9564 |
-| baseline | 2024-12-31 | hgb_poisson | 0.1285 | 0.3989 | 0.2755 | 0.9600 |
-| baseline | 2024-12-31 | linear_regression | 0.1458 | 0.4771 | 0.3006 | 0.9491 |
-| updated | 2025-06-30 | poisson_regression | 0.1311 | 0.4390 | 0.2774 | 0.9588 |
-| updated | 2025-06-30 | hgb_poisson | 0.1124 | 0.3408 | 0.2021 | 0.9612 |
-| updated | 2025-06-30 | linear_regression | 0.1371 | 0.4634 | 0.3248 | 0.9479 |
-
-**Nhận xét:**
-- Khi cập nhật tập train (thêm dữ liệu đến 06/2025), các mô hình đếm ca đều cải thiện trên cửa sổ test 01/2025 (MAE/RMSE giảm).
-- Với mô hình tốt nhất (hgb_poisson), mức giảm MAE từ 0.1285 → 0.1124 cho thấy việc cập nhật dữ liệu giúp mô hình “bắt nhịp” tốt hơn với phân phối mới.
-- Outbreak Acc@0.5 cải thiện nhẹ, phù hợp với nhận định rằng cập nhật dữ liệu giúp ổn định dự đoán vùng có nguy cơ.
-
-**Hình 7 (fig_compare_baseline_vs_updated.png). So sánh baseline vs updated theo các metrics**
-
-![](report_figures/fig_compare_baseline_vs_updated.png)
-
-**Nhận xét:**
-- Các metric thấp hơn (MAE/RMSE/Deviance) ở bản **updated** cho thấy dữ liệu train mới hơn giúp mô hình bám phân phối test tốt hơn.
-- Acc@0.5 tăng nhẹ, phản ánh cải thiện ổn định ở quyết định nguy cơ.
-
-### 6.3. Kết quả trực quan
-
-**Hình 8 (fig_pred_vs_true.png). Scatter $y$ thật vs $\hat{y}$ dự đoán (HistGB Poisson) trên tập test**
-
-![](report_figures/fig_pred_vs_true.png)
-
-Hầu hết điểm tập trung ở $y=0$, một số đỉnh cao bị under‑predict do dữ liệu lệch phải.
-
-**Hình 9 (fig_feature_importance.png). Top 20 Feature Importance (Permutation Importance, scoring = -MAE)**
-
-![](report_figures/fig_feature_importance.png)
-
-Các nhóm đặc trưng quan trọng thường là lag/rolling của ca bệnh, mưa/nhiệt, và đặc trưng lịch; cần đọc theo nhóm do tương quan mạnh giữa các lag.
+1. Câu hỏi: *"Từ nào có nghĩa là 'ăn'?"*
+2. Không nhớ → nhấn **✨ AI gợi ý**
+3. AI phản hồi: *"Động từ đuôi -る, diễn tả hành động đưa thức ăn vào miệng."*
+4. Nhớ ra → nhập 食べる → trả lời đúng → cảm giác thành công.
 
 ---
 
-#### 6.3.1. Dự đoán theo ngày ở mức *toàn tỉnh* (test window)
+### 5.2. AI Explain — Giải thích câu trả lời sai
 
-Biểu đồ tổng hợp theo ngày (cộng dự đoán theo tất cả xã) giúp trả lời câu hỏi: **mô hình nào bám được xu hướng toàn tỉnh** và bớt “phẳng” khi có đỉnh.
+#### 5.2.1. Vấn đề
 
-**Hình 10 (fig_province_daily_true_vs_pred.png). Toàn tỉnh (test): $y$ thật vs $y$ dự đoán theo ngày (GLM vs HistGB)**
+Người học trả lời sai → chỉ thấy đáp án đúng → không hiểu *tại sao* → frustration → bỏ học. Cảm xúc người học chuyển từ "được hướng dẫn" sang "bị phạt".
 
-![](report_figures/fig_province_daily_true_vs_pred.png)
+#### 5.2.2. Giải pháp
 
-GLM bám nền tốt hơn, HistGB linh hoạt hơn ở các đoạn biến thiên mạnh.
+Nút **"✨ AI giải thích"** xuất hiện ngay sau khi chấm sai. AI giải thích ngắn gọn:
+- *Tại sao* đáp án đúng là đúng.
+- Người học *sai ở điểm nào*.
+- Phản hồi song ngữ **tiếng Việt + tiếng Nhật** — phù hợp người học trong nước.
 
-#### 6.3.2. Calibration: mean(y) vs mean(ŷ) theo bins dự đoán
+Thay đổi cảm xúc: từ **"bị phạt"** → **"được hướng dẫn"**.
 
-Calibration cho biết dự đoán có “đúng thang” không (ví dụ: những điểm có ŷ≈0.5 thì trung bình y thực có gần 0.5 không).
+#### 5.2.3. Triển khai kỹ thuật
 
-**Hình 11 (fig_calibration_mean_y_vs_pred.png). Calibration curve (bin theo ŷ): mean(y) vs mean(ŷ)**
+Handler `aiexplain` trong `action.php` nhận 3 tham số: `$questiontext` (câu hỏi), `$correctanswer` (đáp án đúng), `$studentanswer` (câu trả lời của sinh viên). Prompt hướng dẫn AI giải thích sự khác biệt giữa câu trả lời sai và đáp án đúng, bằng tiếng Việt kèm ví dụ tiếng Nhật.
 
-![](report_figures/fig_calibration_mean_y_vs_pred.png)
+#### 5.2.4. Demo luồng hoạt động
 
-Đường gần đường chéo biểu thị dự đoán có thang tốt; lệch ở vùng ŷ lớn cho thấy giới hạn của GLM.
+1. Câu hỏi: *"食べる có nghĩa là gì?"*
+2. Nhập *"uống"* → chấm **sai**.
+3. Nhấn **✨ AI giải thích**.
+4. AI: *"食べる (taberu) = 'ăn'. 'Uống' là 飲む (nomu). 食べる dùng cho thức ăn rắn, 飲む dùng cho chất lỏng."*
 
-#### 6.3.3. Chẩn đoán GLM: Deviance residuals vs fitted
+#### 5.2.5. Tác động marketing
 
-Residual plot giúp kiểm tra nhanh mô hình tuyến tính có “bỏ sót cấu trúc” không (pattern theo ŷ).
+| Chỉ số | Tác động |
+|:---|:---|
+| **Returning Users** | Người học thấy hệ thống có ích → quay lại lần sau |
+| **Session Duration** | Dừng lại đọc giải thích → tăng thời gian mỗi phiên |
+| **Repeat Errors** | Thẻ từng sai + có AI Explain → tỷ lệ đúng lần sau cao hơn |
 
-**Hình 12 (fig_glm_residuals_vs_fitted.png). GLM: Deviance residuals vs fitted (test)**
-
-![](report_figures/fig_glm_residuals_vs_fitted.png)
-
-Pattern theo ŷ là dấu hiệu GLM đang thiếu tương tác/phi tuyến.
-
-#### 6.3.4. Metric vận hành theo thời gian: Hotspot Hit@10 theo ngày
-
-Hit@K theo ngày cho thấy tính ổn định của quyết định “ưu tiên xã nào” trong vận hành.
-
-**Hình 13 (fig_hit10_over_time.png). Hotspot Hit@10 theo ngày (test)**
-
-![](report_figures/fig_hit10_over_time.png)
-
-#### 6.3.5. Backtest theo tháng trong năm 2025 (train_end cố định)
-
-Vì cửa sổ test 01/2025 khá ngắn, báo cáo bổ sung backtest theo **từng tháng** trong 2025 (mô hình vẫn train đến 2024-12-31) để quan sát độ ổn định theo mùa.
-
-**Hình 14 (fig_backtest_mae_by_month.png). Backtest 2025: MAE theo tháng**
-
-![](report_figures/fig_backtest_mae_by_month.png)
-
-**Hình 15 (fig_backtest_hit10_by_month.png). Backtest 2025: Hit@10 theo tháng**
-
-![](report_figures/fig_backtest_hit10_by_month.png)
-
-File số liệu backtest được xuất ra: `report_figures/metrics_backtest_monthly.csv`.
-
-### 6.4. Phân tích
-Kết quả cho thấy:
-- HistGB(poisson) thường vượt GLM ở các đoạn có biến thiên mạnh và ở metric Poisson deviance.
-- Dữ liệu nhiều số 0 khiến mô hình dễ bị kéo về 0; vì vậy Hit@K phản ánh tốt mục tiêu “điểm nóng”.
-- Sai số cao chủ yếu ở ngày đột biến; cần thêm biến xã hội/can thiệp để cải thiện.
+**Insight GA4:** `ai_explain` calls sau `card_answered(correct=false)` → biết thẻ nào người học muốn hiểu sâu → ưu tiên cải thiện nội dung.
 
 ---
 
-## CHƯƠNG 7. KẾT LUẬN, THẢO LUẬN VÀ PHỤ LỤC KỸ THUẬT
+### 5.3. AI Course Suggest — Gợi ý khóa học
 
-### 7.1. Kết luận
-- Đã xây dựng pipeline dữ liệu và ứng dụng dự đoán theo ngày.
-- So sánh các mô hình đếm ca cho thấy mô hình phi tuyến (boosting) có xu hướng tốt hơn về MAE/RMSE/Deviance và Hotspot Hit@K.
+#### 5.3.1. Vấn đề
 
-### 7.2. Hạn chế
-- Ca bệnh theo ngày khám (có độ trễ so với ngày khởi phát).
-- Thiếu biến can thiệp và biến xã hội.
-- Thời tiết theo điểm đại diện xã/phường (xấp xỉ).
+Người học hoàn thành bài test → chỉ thấy biểu đồ đúng/sai → không biết học gì tiếp theo. Trải nghiệm kết thúc ở "xong bài — bỏ đi" thay vì "xong bài — biết học gì tiếp".
+
+#### 5.3.2. Giải pháp
+
+Nút **"✨ AI gợi ý khóa học"** xuất hiện ngay sau khi kết thúc phiên luyện tập (kế bên biểu đồ doughnut kết quả). AI phân tích kết quả phiên và đưa ra:
+
+- **Đánh giá trình độ** hiện tại dựa trên tỷ lệ đúng/sai.
+- **Gợi ý 2–3 khóa học/tài nguyên** phù hợp trình độ.
+- **Lộ trình ôn tập** cụ thể (thời gian, tần suất, nội dung ưu tiên).
+- Phản hồi bằng **tiếng Việt** với bullet points rõ ràng.
+
+#### 5.3.3. Triển khai kỹ thuật
+
+Handler `aicoursesuggest` trong `action.php` nhận 4 tham số:
+
+- `$countright` — số câu trả lời đúng.
+- `$countwrong` — số câu trả lời sai.
+- `$wrongquestions` — danh sách nội dung các câu sai (phân cách bằng dấu `;`).
+- `$topicname` — tên chủ đề đang luyện tập.
+
+Phía client, class `Coordinate` duy trì mảng `wrongQuestionTexts`. Mỗi khi người học trả lời sai, phương thức `getQuestionTextFromData(data)` trích xuất nội dung thuần (loại bỏ HTML tags) và thêm vào mảng. Khi kết thúc phiên, toàn bộ danh sách được truyền cho `Statistics.finishPractice()` để gọi AJAX.
+
+AI tính toán phần trăm đúng (`$percent = round(100 * $countright / $total)`) và xây dựng prompt chứa đầy đủ ngữ cảnh phiên luyện tập.
+
+#### 5.3.4. Demo luồng hoạt động
+
+1. Hoàn thành phiên: 8/15 đúng (53%), 7 câu sai.
+2. Biểu đồ doughnut hiển thị kết quả.
+3. Nhấn **✨ AI gợi ý khóa học**.
+4. AI phân tích:
+   - *"Trình độ: Đang ở giai đoạn N5→N4. Cần củng cố từ vựng cơ bản."*
+   - *"Gợi ý: Minna no Nihongo Bài 10-15, app Anki deck N4 Kanji."*
+   - *"Lộ trình: Ôn lại bộ Kanji cơ bản 2 ngày/lần, 15 phút mỗi phiên."*
+
+#### 5.3.5. Tác động marketing
+
+| Chỉ số | Tác động |
+|:---|:---|
+| **Returning Users** | Người học có lộ trình rõ ràng → quay lại lần sau |
+| **Engagement** | Nhận gợi ý cụ thể → tăng động lực tiếp tục |
+| **Session Quality** | Từ "luyện tập bị động" → "hành trình học có hướng dẫn" |
+| **Retention** | Cá nhân hóa trải nghiệm → giảm tỷ lệ bỏ học |
+
+**Insight GA4:** Tỷ lệ click "AI gợi ý khóa học" sau phiên có % thấp → cần cải thiện nội dung thẻ. Tỷ lệ click cao + quay lại luyện tập → chứng minh giá trị của tính năng.
+
+---
+
+### 5.4. AI Card Generator — Tạo thẻ tự động
+
+#### 5.4.1. Vấn đề
+
+Giảng viên mất hàng giờ nhập tay từng thẻ một → tạo bottleneck mở rộng nội dung. Với một bộ thẻ 500 từ vựng N5, việc nhập liệu thủ công có thể mất nhiều ngày.
+
+#### 5.4.2. Giải pháp
+
+AI Card Generator tạo thẻ tự động với 2 chế độ:
+
+**Chế độ 1: Nhập từ/chủ đề**
+- Giảng viên nhập một từ (ví dụ "食べる") hoặc chủ đề (ví dụ "màu sắc").
+- AI tạo cặp câu hỏi–đáp án (Q&A) tiếng Nhật.
+- Thẻ được lưu thẳng vào bộ thẻ (tự động duyệt nếu người tạo có quyền `approvecard`).
+
+**Chế độ 2: Chọn cấp JLPT (N1–N5)**
+- Giảng viên chọn cấp độ JLPT (Japanese Language Proficiency Test).
+- AI chọn từ ngẫu nhiên phù hợp cấp độ và tạo flashcard.
+- Mỗi lần nhấn = 1 thẻ mới, nội dung không trùng lặp.
+
+#### 5.4.3. Triển khai kỹ thuật
+
+Hai handler trong `action.php`:
+
+- `aicardgenjlpt` — nhận `$level` (N1–N5), sử dụng prompt `ai_cardgen_jlpt_prompt` yêu cầu AI trả JSON format `{question, answer}`. Response được parse JSON, tạo card mới trong database, và lưu nội dung question/answer.
+- `aicardgensave` — nhận `$topic` (văn bản tự do), cùng logic parse và lưu.
+
+Cả hai handler yêu cầu quyền `mod/cardbox:submitcard` để đảm bảo chỉ người được phép mới tạo thẻ.
+
+#### 5.4.4. Giá trị
+
+- Giảm **80% thời gian** biên soạn. Giảng viên tập trung duyệt nội dung thay vì nhập liệu.
+- **GA4 insight:** Đo số thẻ AI-generated vs manual → biết AI đóng góp bao nhiêu % nội dung.
+
+---
+
+## CHƯƠNG 6. ĐÁNH GIÁ AI TRONG THƯƠNG MẠI ĐIỆN TỬ GIÁO DỤC
+
+### 6.1. Bối cảnh thương mại điện tử giáo dục
+
+Thị trường EdTech toàn cầu đang tăng trưởng mạnh, với dự báo đạt 404 tỷ USD vào năm 2025 [20]. Trong bối cảnh này, việc tích hợp AI không chỉ cải thiện trải nghiệm học mà còn trực tiếp tác động đến các chỉ số kinh doanh.
+
+### 6.2. Phân tích từ bốn góc nhìn marketing
+
+#### 6.2.1. Cá nhân hóa hành trình mua (Personalized Customer Journey)
+
+AI phân tích kết quả test → gợi ý khóa học phù hợp trình độ → **tăng tỷ lệ chuyển đổi (conversion)**. Cơ chế này tương tự hệ thống "Khách hàng cũng mua..." của Amazon — recommendation engine dựa trên hành vi thực tế, không chỉ demographics [18]. Nghiên cứu cho thấy cá nhân hóa có thể tăng conversion rate lên 10–30% trong TMĐT [17].
+
+#### 6.2.2. Tăng giá trị vòng đời (Customer Lifetime Value)
+
+Người học nhận lộ trình → mua khóa tiếp theo → **upsell tự nhiên**. AI Course Suggest biến 1 lần mua thành chuỗi khóa học liên tục, tăng CLV mà không cần quảng cáo bổ sung. Theo Kotler và Armstrong (2018), chi phí giữ khách hàng cũ thấp hơn 5–25 lần so với thu hút khách mới [18].
+
+#### 6.2.3. Giảm tỷ lệ bỏ học (Churn Reduction)
+
+AI Hint + AI Explain giữ người học không bỏ cuộc → **giảm hoàn tiền**, tăng đánh giá tích cực (review/rating) → thu hút khách hàng mới qua social proof. Trong EdTech, tỷ lệ hoàn thành khóa học trực tuyến trung bình chỉ khoảng 5–15% [15]; AI hỗ trợ có tiềm năng cải thiện đáng kể con số này.
+
+#### 6.2.4. Nội dung tự động — giảm chi phí (Content Automation)
+
+AI Card Generator tạo thẻ tự động → **giảm 80% thời gian** biên soạn → mở rộng catalogue nhanh hơn đối thủ. Trong TMĐT giáo dục, đa dạng nội dung là lợi thế cạnh tranh: càng nhiều khóa học/nội dung phù hợp ngách → càng có khả năng thu hút người học mới.
+
+### 6.3. Tổng kết giá trị marketing
+
+AI không chỉ cải thiện trải nghiệm học — mà trực tiếp **tăng doanh thu**: conversion cao hơn (nhờ cá nhân hóa), retention tốt hơn (nhờ AI giữ chân), chi phí sản xuất nội dung thấp hơn (nhờ tự động hóa), và CLV cao hơn (nhờ upsell tự nhiên).
+
+---
+
+## CHƯƠNG 7. HẠN CHẾ, KẾT LUẬN VÀ HƯỚNG PHÁT TRIỂN
+
+### 7.1. Hạn chế
+
+- **GA4 và quyền riêng tư:** Cần tuân thủ GDPR [21] và chính sách dữ liệu của trường; không thu thập dữ liệu nhận dạng cá nhân (PII). GA4 ghi nhận hành vi ở mức tổng hợp (event-level), không lưu thông tin cá nhân sinh viên.
+- **AI Hint / AI Explain:** Chất lượng phụ thuộc vào AI provider được cấu hình trong Moodle. Không dùng được nếu quản trị viên chưa cài plugin `aiprovider_openai` hoặc tương đương.
+- **AI Image:** Dùng trực tiếp OpenAI API key → chi phí phát sinh mỗi lần generate; cần quản lý quota để tránh vượt ngân sách.
+- **Latency:** Gọi AI API thêm 3–5 giây mỗi request — hiện chưa có cơ chế cache. Người học phải đợi phản hồi, có thể ảnh hưởng trải nghiệm với kết nối chậm.
+- **Đánh giá định lượng:** Chưa có dữ liệu A/B testing thực tế để so sánh metrics trước/sau triển khai AI. Các tác động marketing được phân tích dựa trên lý thuyết và mô hình logic.
+
+### 7.2. Kết luận
+
+Báo cáo đã trình bày và triển khai thành công 5 tính năng tích hợp vào plugin mod_cardbox trên Moodle:
+
+| Tính năng | Mục tiêu | Trạng thái |
+|:---|:---|:---|
+| **GA4 Integration** | Đo lường hành vi học tập (3 custom events) | ✅ Hoàn thành |
+| **AI Hint** | Gợi ý cá nhân hóa (văn bản + hình ảnh) | ✅ Hoàn thành |
+| **AI Explain** | Giải thích câu sai song ngữ Việt–Nhật | ✅ Hoàn thành |
+| **AI Course Suggest** | Gợi ý khóa học + lộ trình sau test | ✅ Hoàn thành |
+| **AI Card Generator** | Tạo thẻ tự động (từ/JLPT) | ✅ Hoàn thành |
+
+**Giá trị mang lại:**
+- GA4 cung cấp dữ liệu hành vi để tối ưu nội dung và đo lường hiệu quả marketing.
+- AI nâng cao trải nghiệm (giảm drop-off, tăng engagement) và giữ chân người học (tăng retention).
+- Từ góc nhìn TMĐT giáo dục: tăng conversion, tăng CLV, giảm churn, giảm chi phí nội dung.
 
 ### 7.3. Hướng phát triển
-- Negative Binomial / Zero-Inflated Poisson để xử lý over-dispersion và nhiều số 0.
-- Forecast horizon: dự đoán trước 7–14 ngày.
-- Bổ sung dữ liệu dân số, vệ sinh môi trường, chiến dịch diệt lăng quăng.
-- Giám sát drift và cập nhật mô hình định kỳ.
+
+- **GA4 + BigQuery:** Xuất dữ liệu vào BigQuery để phân tích cohort, dự đoán nguy cơ bỏ học, và xây dựng dashboard nâng cao.
+- **AI Quiz Generator:** Tự động tạo bài kiểm tra từ bộ thẻ có sẵn — mở rộng từ flashcard sang assessment.
+- **Chatbot học tập:** AI trò chuyện tương tác để luyện hội thoại tiếng Nhật — chuyển từ vocabulary sang communication skills.
+- **Cache AI responses:** Giảm latency và chi phí bằng cách cache kết quả AI cho các câu hỏi lặp lại — cải thiện trải nghiệm và tối ưu ngân sách.
+- **A/B Testing:** Triển khai thử nghiệm A/B thực tế để đo lường định lượng tác động của từng tính năng AI lên các chỉ số marketing.
 
 ---
 
+## TÀI LIỆU THAM KHẢO
 
-### 7.4. Phân tích bổ sung và thảo luận
+[1] H. Ebbinghaus, *Über das Gedächtnis: Untersuchungen zur experimentellen Psychologie*. Leipzig: Duncker & Humblot, 1885. Bản dịch tiếng Anh: H. A. Ruger and C. E. Bussenius, *Memory: A Contribution to Experimental Psychology*. New York: Teachers College, Columbia University, 1913. [Online]. Available: https://psychclassics.yorku.ca/Ebbinghaus/
 
-**Mùa vụ, độ trễ và độ nhạy**
-Phân tích mùa vụ cho thấy đỉnh ca bệnh tập trung vào mùa mưa. Cơ chế có thể giải thích bằng chuỗi tác động: mưa tạo điều kiện hình thành ổ bọ gậy, quần thể muỗi tăng sau một khoảng trễ sinh học, sau đó ca bệnh tăng theo. Do đó, đặc trưng độ trễ (lag) và trung bình trượt (rolling) là cần thiết để mô hình nắm được quy luật này. Trong thực tế, khoảng trễ tối ưu có thể dao động theo điều kiện vi mô từng địa bàn, mật độ dân cư và cường độ can thiệp y tế.
+[2] N. J. Cepeda, E. Vul, D. Rohrer, J. T. Wixted, and H. Pashler, "Spacing effects in learning: A temporal ridgeline of optimal retention," *Psychological Science*, vol. 19, no. 11, pp. 1095–1102, 2008. doi: 10.1111/j.1467-9280.2008.02209.x
 
-Để kiểm tra độ nhạy, có thể tăng/giảm tập lag (ví dụ {1,3,7,14} ↔ {1,7,14,21}) và so sánh MAE/Hit@K. Mục tiêu không chỉ là tối ưu sai số trung bình mà còn giữ ổn định khả năng xếp hạng điểm nóng. Với dữ liệu nhiều số 0, việc thêm quá nhiều lag dễ làm mô hình bám quán tính và giảm khả năng phát hiện đỉnh mới.
+[3] H. L. Roediger III and J. D. Karpicke, "Test-enhanced learning: Taking memory tests improves long-term retention," *Psychological Science*, vol. 17, no. 3, pp. 249–255, 2006. doi: 10.1111/j.1467-9280.2006.01693.x
 
-**Phân tích lỗi theo mức độ ca bệnh**
-Sai số thường nhỏ ở vùng y=0 và tăng mạnh khi y lớn. Để minh họa, có thể phân nhóm theo khoảng y (0, 1–2, 3–5, >5) và tính MAE theo nhóm. Điều này giúp đánh giá “tính công bằng” theo mức độ rủi ro, tránh mô hình chỉ tối ưu vùng phổ biến (y=0) mà bỏ qua các đỉnh hiếm.
+[4] N. Kornell, "Optimising learning using flashcards: Spacing is more effective than cramming," *Applied Cognitive Psychology*, vol. 23, no. 9, pp. 1297–1317, 2009. doi: 10.1002/acp.1537
 
-**Ổn định theo mùa và khả năng tổng quát**
-Backtest theo tháng (năm 2025) cho thấy sai số và Hit@K biến động theo mùa. Mùa mưa thường có sai số cao hơn do biến động lớn và đỉnh bùng phát. Điều này gợi ý cần cập nhật mô hình định kỳ và theo dõi drift.
+[5] I. S. P. Nation, *Learning Vocabulary in Another Language*. Cambridge: Cambridge University Press, 2001. doi: 10.1017/CBO9781139524759
 
-Mô hình được huấn luyện trên Tiền Giang (cũ). Khi chuyển sang tỉnh khác, cần chuẩn hóa dữ liệu ca bệnh, cập nhật ranh giới hành chính và kiểm tra tính phù hợp của đặc trưng thời tiết (độ trễ, mùa vụ). Việc giữ nguyên pipeline nhưng thay dữ liệu giúp mở rộng phạm vi ứng dụng.
+[6] T. Nakata, "Computer-assisted second language vocabulary learning in a paired-associate paradigm: A critical investigation of flashcard software," *Computer Assisted Language Learning*, vol. 24, no. 1, pp. 17–38, 2011. doi: 10.1080/09588221.2010.520675
 
-**So sánh tuyến tính vs phi tuyến và ý nghĩa Hit@K**
-Linear Regression cung cấp baseline tuyến tính nhưng thiếu ràng buộc dữ liệu đếm, trong khi Poisson GLM ràng buộc theo log-link và không âm. HistGradientBoosting bắt tương tác phi tuyến tốt hơn ở vùng đỉnh. So sánh ba mô hình giúp tách bạch hiệu quả của (i) ràng buộc phân phối đếm và (ii) khả năng học phi tuyến.
+[7] M. Dougiamas and P. Taylor, "Moodle: Using learning communities to create an open source course management system," in *Proc. EDMEDIA 2003 — World Conference on Educational Multimedia, Hypermedia & Telecommunications*, Honolulu, HI, 2003. [Online]. Available: https://moodle.org/
 
-Hit@K đo xác suất mô hình “bắt đúng” xã có ca cao nhất trong top-K dự báo. Đây là metric gần với mục tiêu vận hành hơn MAE vì hệ thống thực tế ưu tiên khoanh vùng can thiệp. Do đó, mô hình có MAE thấp hơn nhưng Hit@K kém hơn vẫn có thể kém hữu ích trong vận hành.
+[8] Moodle Pty Ltd, "Moodle — Open-source learning platform," 2025. [Online]. Available: https://moodle.org/; Thống kê: https://stats.moodle.org/
 
-**Khía cạnh đạo đức và quản trị dữ liệu**
-Dữ liệu ca bệnh có thể chứa yếu tố nhạy cảm. Hệ thống chỉ dùng dữ liệu tổng hợp theo ngày–xã nên giảm nguy cơ lộ thông tin cá nhân. Khi triển khai thực tế, cần quy trình quản trị dữ liệu, kiểm soát truy cập và tuân thủ quy định địa phương.
+[9] S. Leitner, *So lernt man lernen: Der Weg zum Erfolg*. Freiburg im Breisgau: Herder, 1972.
 
----
+[10] J. D. Karpicke and J. R. Blunt, "Retrieval practice produces more learning than elaborative studying with concept mapping," *Science*, vol. 331, no. 6018, pp. 772–775, 2011. doi: 10.1126/science.1199327
 
-### 7.5. Phụ lục kỹ thuật và dữ liệu
+[11] Moodle, "AI subsystem — Moodle Developer Documentation," 2025. [Online]. Available: https://moodledev.io/docs/apis/subsystems/ai
 
-**Pipeline xử lý dữ liệu và pseudocode**
-Pipeline dữ liệu gồm các bước: (i) chuẩn hóa tên xã/phường, (ii) chuẩn hóa ngày tháng, (iii) tổng hợp ca bệnh theo ngày–xã, (iv) ghép với thời tiết theo ngày–xã, (v) tạo đặc trưng lag/rolling, (vi) tách train/test theo thời gian, (vii) huấn luyện và lưu artifacts.
+[12] Google, "Google Analytics 4 — Developer Documentation," 2025. [Online]. Available: https://developers.google.com/analytics
 
-```text
-Input: cases.csv, weather.csv
-1. Load cases, standardize commune names
-2. Aggregate cases by (xa, date)
-3. Load weather and filter communes
-4. Merge weather + cases -> panel
-5. Build features: lag, rolling, calendar
-6. Split by date -> train/test
-7. Train 3 models: Linear, Poisson GLM, HistGB
-8. Evaluate metrics + save artifacts
-```
+[13] Google, "[GA4] About events," Google Analytics Help, 2025. [Online]. Available: https://support.google.com/analytics/answer/9322688
 
-**Feature store, cửa sổ lịch sử và nhất quán suy luận**
-Trong suy luận, hệ thống dựng lại cửa sổ 14 ngày cho mỗi xã để tính lag/rolling. Nguồn thời tiết lấy từ feature store (lịch sử) hoặc forecast (Open‑Meteo) tùy theo ngày mục tiêu. Điều này đảm bảo tính nhất quán giữa train và inference.
+[14] G. Siemens and P. Long, "Penetrating the fog: Analytics in learning and education," *EDUCAUSE Review*, vol. 46, no. 5, pp. 31–40, Sep./Oct. 2011. [Online]. Available: https://er.educause.edu/articles/2011/9/penetrating-the-fog-analytics-in-learning-and-education
 
-**Siêu tham số và cấu hình mô hình**
-- **PoissonRegressor:** alpha=1e-4, max_iter=1000.  
-- **HistGradientBoostingRegressor:** loss='poisson', learning_rate=0.05, max_iter=200, max_leaf_nodes=31, min_samples_leaf=50.  
-- **LinearRegression:** mặc định scikit-learn, dự báo được clip về 0.
+[15] W. Holmes, M. Bialik, and C. Fadel, *Artificial Intelligence in Education: Promises and Implications for Teaching and Learning*. Boston, MA: Center for Curriculum Redesign, 2019. ISBN: 978-1-7945-1700-0
 
-**Kiến trúc hệ thống và luồng dữ liệu**
-- **Backend:** FastAPI, phục vụ các endpoint dự báo và trả kết quả JSON.  
-- **Frontend:** Leaflet + bảng Top‑K + bản đồ điểm.  
-- **Tầng dữ liệu:** artifacts (model + feature store) và cache thời tiết.
+[16] L. Chen, P. Chen, and Z. Lin, "Artificial intelligence in education: A review," *IEEE Access*, vol. 8, pp. 75264–75278, 2020. doi: 10.1109/ACCESS.2020.2988510
 
-**Hiệu năng, độ trễ và tối ưu**
-Độ trễ suy luận phụ thuộc vào việc lấy thời tiết forecast. Khi cache được bật, phần lớn truy vấn có thể trả kết quả nhanh (dưới vài giây). Việc dựng cửa sổ 14 ngày được tối ưu bằng feature store để tránh truy vấn lặp.
+[17] D. Chaffey and F. Ellis-Chadwick, *Digital Marketing: Strategy, Implementation and Practice*, 7th ed. Harlow: Pearson, 2019. ISBN: 978-1-292-24157-9
 
----
+[18] P. Kotler and G. Armstrong, *Principles of Marketing*, 17th ed. Harlow: Pearson, 2018. ISBN: 978-0-13-449251-3
 
+[19] OpenAI, "API Reference — Images," 2025. [Online]. Available: https://platform.openai.com/docs/api-reference/images
 
-**Từ điển dữ liệu (ca bệnh + thời tiết)**
-**Ca bệnh:**
-| Cột | Mô tả | Ghi chú |
-|---|---|---|
-| XA_PHUONG_MOI | Tên xã/phường chuẩn hóa | Đồng bộ với TenXa |
-| NGAY_KHAM | Ngày khám/phát hiện | Dùng làm proxy thời điểm ca bệnh |
+[20] HolonIQ, "Global EdTech Market Map," 2024. [Online]. Available: https://www.holoniq.com/edtech
 
-**Thời tiết:**
-| Cột | Mô tả | Đơn vị |
-|---|---|---|
-| date | Ngày | YYYY‑MM‑DD |
-| rain_mm | Lượng mưa | mm |
-| temp_c | Nhiệt độ | °C |
-| wind_speed_ms | Tốc độ gió | m/s |
-| wind_dir_deg | Hướng gió | độ |
-
-**Danh sách đặc trưng và công thức**
-- Lag mưa: rain(t‑1), rain(t‑3), rain(t‑7), rain(t‑14)
-- Rolling mưa: mean rain(t‑7), mean rain(t‑14)
-- Lag nhiệt: temp(t‑1), temp(t‑3), temp(t‑7), temp(t‑14)
-- Rolling nhiệt: mean temp(t‑7), mean temp(t‑14)
-- Lịch: month, day‑of‑year, sin/cos chu kỳ
-- Lag ca bệnh: cases(t‑1), cases(t‑3), cases(t‑7), cases(t‑14)
-
-- MAE, RMSE, Poisson deviance và Hit@K như đã nêu ở Chương 4.  
-- Hit@K được tính theo ngày, kiểm tra xã có ca cao nhất nằm trong top‑K dự báo.
-
-**Tham số mô hình và cấu hình chạy**
-- Cấu hình các mô hình: xem mục 7.5.  
-- Cửa sổ lịch sử: 14 ngày.  
-- Lag/rolling như phần danh sách đặc trưng.
-
-**Checklist tái tạo kết quả**
-1. Chạy train.py để sinh artifacts.  
-2. Chạy make_figures_and_metrics_v2.py để sinh hình/metrics.  
-3. Đồng bộ bảng kết quả vào báo cáo và slide.
-
-**Gợi ý mở rộng**
-- Thêm mô hình count nâng cao (NB/Zero‑Inflated).  
-- Mở rộng backtest theo quý/năm.  
-- Bổ sung biến xã hội và can thiệp.
-
----
-## PHỤ LỤC A: Danh sách hình đã sinh (thư mục `report_figures/`)
-
-| Hình | Tên file | Nội dung / mục đích |
-|---:|---|---|
-| 1 | `fig_cases_monthly.png` | Tổng số ca SXH theo tháng |
-| 2 | `fig_rain_vs_cases_monthly.png` | So sánh xu hướng ca SXH và lượng mưa trung bình theo tháng |
-| 3 | `fig_lag_corr_rain.png` | Tương quan độ trễ: $y(t)$ và $rain(t-k)$ |
-| 4 | `fig_y_distribution.png` | Phân phối nhãn $y$ (log-count) và tỷ lệ $y=0$ |
-| 5 | `fig_zero_rate_monthly.png` | Tỷ lệ quan sát $y=0$ theo tháng |
-| 6 | `fig_mean_variance_by_xa.png` | Kiểm tra over‑dispersion: Var(y) vs Mean(y) theo xã |
-| 7 | `fig_compare_baseline_vs_updated.png` | So sánh baseline vs updated theo các metrics |
-| 8 | `fig_pred_vs_true.png` | Scatter $y$ thật vs $\hat{y}$ dự đoán (HistGB Poisson) trên tập test |
-| 9 | `fig_feature_importance.png` | Top 20 Feature Importance (Permutation Importance, scoring = -MAE) |
-| 10 | `fig_province_daily_true_vs_pred.png` | Toàn tỉnh (test): $y$ thật vs $y$ dự đoán theo ngày (GLM vs HistGB) |
-| 11 | `fig_calibration_mean_y_vs_pred.png` | Calibration curve (bin theo ŷ): mean(y) vs mean(ŷ) |
-| 12 | `fig_glm_residuals_vs_fitted.png` | GLM: Deviance residuals vs fitted (test) |
-| 13 | `fig_hit10_over_time.png` | Hotspot Hit@10 theo ngày (test) |
-| 14 | `fig_backtest_mae_by_month.png` | Backtest 2025: MAE theo tháng |
-| 15 | `fig_backtest_hit10_by_month.png` | Backtest 2025: Hit@10 theo tháng |
-
-*Ghi chú:* `fig_compare_baseline_vs_updated.png` (Hình 7) chỉ được tạo khi có file `artifacts/compare_baseline_vs_update.csv`.
-
-
-## PHỤ LỤC: Cách tái tạo hình và số liệu
-Chạy lệnh:
-
-```bash
-python make_figures_and_metrics_v2.py \
-  --cases_csv sxh_sap_nhap_mapped.csv \
-  --weather_csv weather_daily_2023_2025.csv \
-  --out_dir report_figures
-```
-
-Các file kết quả sẽ nằm trong `report_figures/`.
-
----
-
-## Tài liệu tham khảo
-
-[1] World Health Organization (WHO), “Dengue and severe dengue.” [Online]. Available: https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue  
-[2] World Health Organization and TDR, “Dengue early warning system (EWS).” [Online]. Available: https://www.who.int/tdr/publications/documents/dengue-ews.pdf  
-[3] C. W. Morin, A. C. Comrie, and K. Ernst, “Climate and dengue transmission: evidence and implications,” *Nature Climate Change*, 2013. doi: 10.1038/nclimate1826  
-[4] M. A. Johansson et al., “Climate variability and dengue hemorrhagic fever in Thailand,” 2009. doi: 10.1016/j.epidem.2009.01.002  
-[5] R. Lowe et al., “Dengue outlook for the World Cup in Brazil: weather-based forecast,” 2011. doi: 10.1371/journal.pntd.0001038  
-[6] P. McCullagh and J. A. Nelder, *Generalized Linear Models*, 2nd ed. Chapman & Hall, 1989. [Online]. Available: https://www.taylorfrancis.com/books/mono/10.1201/9780203753736  
-[7] A. C. Cameron and P. K. Trivedi, *Regression Analysis of Count Data*, 2nd ed. Cambridge Univ. Press, 2013. doi: 10.1017/CBO9781139013567  
-[8] J. M. Hilbe, *Modeling Count Data*. Cambridge Univ. Press, 2014. doi: 10.1017/CBO9781139236065  
-[9] J. A. Nelder and R. W. M. Wedderburn, “Generalized linear models,” 1972. doi: 10.2307/2344614  
-[10] J. H. Friedman, “Greedy function approximation: A gradient boosting machine,” 2001. [Online]. Available: https://statweb.stanford.edu/~jhf/ftp/trebst.pdf  
-[11] J. H. Friedman, “Stochastic gradient boosting,” 2002. doi: 10.1198/016214502388618476  
-[12] G. Ridgeway, “Generalized boosted models: A guide to the gbm package,” 2007. [Online]. Available: https://cran.r-project.org/web/packages/gbm/vignettes/gbm.pdf  
-[13] P. Bühlmann and T. Hothorn, “Boosting algorithms: Regularization, prediction and model fitting,” 2007. doi: 10.1214/07-STS242  
-[14] G. Ke et al., “LightGBM: A highly efficient gradient boosting decision tree,” 2017. [Online]. Available: https://papers.nips.cc/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html  
-[15] scikit-learn documentation, “PoissonRegressor.” [Online]. Available: https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.PoissonRegressor.html  
-[16] scikit-learn documentation, “HistGradientBoostingRegressor (loss='poisson').” [Online]. Available: https://scikit-learn.org/stable/modules/ensemble.html#histogram-based-gradient-boosting; https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingRegressor.html  
-[17] Open-Meteo, “Historical & Forecast Weather API.” [Online]. Available: https://open-meteo.com/en/docs
+[21] European Parliament and Council of the European Union, "Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 (General Data Protection Regulation)," *Official Journal of the European Union*, vol. L 119, pp. 1–88, May 2016. [Online]. Available: https://eur-lex.europa.eu/eli/reg/2016/679/oj

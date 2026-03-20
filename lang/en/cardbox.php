@@ -344,6 +344,9 @@ $string['ai_hint_history_retry'] = 'Học sinh đã thử thẻ này {$a} lần 
 $string['ai_hint_history_known'] = 'Học sinh đã từng trả lời đúng thẻ này trước đây. Hãy đưa ra gợi ý ngắn gọn giúp họ kích hoạt lại ký ức.';
 $string['ai_hint_image_prompt'] = 'Create a simple visual hint image that helps a student recall the answer to this flashcard question without directly showing the answer text. Question: {$a->question}';
 $string['ai_explain_prompt'] = 'Bạn là trợ lý học tập. Học sinh trả lời sai. Hãy giải thích ngắn gọn (2-3 câu) tại sao đáp án đúng là đúng và đáp án của học sinh sai ở điểm nào. Trả lời bằng tiếng Việt trước, sau đó dịch sang tiếng Nhật. Câu hỏi: {$a->question} | Đáp án đúng: {$a->correctanswer} | Học sinh trả lời: {$a->studentanswer}';
+$string['ai_course_suggest'] = 'AI gợi ý khóa học';
+$string['ai_course_suggest_tooltip'] = 'Nhận gợi ý khóa học và lộ trình học tập từ AI dựa trên kết quả bài test';
+$string['ai_course_suggest_prompt'] = 'Bạn là trợ lý tư vấn học tập tiếng Nhật. Học sinh vừa hoàn thành một bài test flashcard với kết quả: {$a->countright}/{$a->total} câu đúng ({$a->percent}%). Số câu sai: {$a->countwrong}. Các câu trả lời sai bao gồm: {$a->wrongquestions}. Chủ đề bài test: {$a->topicname}. Dựa trên kết quả này, hãy: 1) Đánh giá ngắn gọn trình độ hiện tại của học sinh. 2) Gợi ý 2-3 khóa học hoặc tài nguyên học tập cụ thể phù hợp (sách giáo khoa, website, ứng dụng, khóa học online). 3) Đề xuất lộ trình ôn tập: nên ôn chủ đề nào trước, tần suất ra sao. Trả lời bằng tiếng Việt, ngắn gọn, có bullet points.';
 $string['cardbox:useai'] = 'Use AI features during practice';
 
 // Settings.

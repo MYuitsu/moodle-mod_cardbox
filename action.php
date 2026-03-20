@@ -403,6 +403,54 @@ if ($action === 'aicardgensave') {
 
 /* ****************************************** AI Explain Wrong Answer **************************************************** */
 
+/* ****************************************** AI Course Suggest **************************************************** */
+
+if ($action === 'aicoursesuggest') {
+
+    require_capability('mod/cardbox:useai', $context);
+
+    $countright = required_param('countright', PARAM_INT);
+    $countwrong = required_param('countwrong', PARAM_INT);
+    $wrongquestions = optional_param('wrongquestions', '', PARAM_TEXT);
+    $topicname = optional_param('topicname', '', PARAM_TEXT);
+
+    $total = $countright + $countwrong;
+    $percent = $total > 0 ? round(100 * $countright / $total) : 0;
+
+    // Build the prompt.
+    $promptdata = new stdClass();
+    $promptdata->total = $total;
+    $promptdata->countright = $countright;
+    $promptdata->countwrong = $countwrong;
+    $promptdata->percent = $percent;
+    $promptdata->wrongquestions = $wrongquestions;
+    $promptdata->topicname = $topicname;
+    $prompt = get_string('ai_course_suggest_prompt', 'cardbox', $promptdata);
+
+    // Call the AI subsystem.
+    try {
+        $aiaction = new \core_ai\aiactions\generate_text(
+            contextid: $context->id,
+            userid: $USER->id,
+            prompttext: $prompt,
+        );
+        $manager = \core\di::get(\core_ai\manager::class);
+        $response = $manager->process_action($aiaction);
+
+        if ($response->get_success()) {
+            $responsedata = $response->get_response_data();
+            $generatedcontent = $responsedata['generatedcontent'] ?? '';
+            echo json_encode(['status' => 'success', 'content' => format_text($generatedcontent, FORMAT_MARKDOWN)]);
+        } else {
+            echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox')]);
+    }
+}
+
+/* ****************************************** AI Explain **************************************************** */
+
 if ($action === 'aiexplain') {
 
     require_capability('mod/cardbox:useai', $context);
