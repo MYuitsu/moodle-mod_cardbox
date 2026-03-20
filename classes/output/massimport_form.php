@@ -41,6 +41,34 @@ class massimport_form extends \moodleform {
         $mform->setType('action', PARAM_ALPHANUM);
         $mform->setDefault('action', 'massimport');
 
+        // AI Card Generator section.
+        $mform->addElement('html',
+            '<div class="cardbox-aicardgen-section">'
+            . '<div class="cardbox-aicardgen-label">✨ ' . get_string('ai_cardgen_label', 'cardbox') . '</div>'
+            . '<p style="color:#555; font-size:0.9em; margin-bottom:8px">' . get_string('ai_cardgen_massdesc', 'cardbox') . '</p>'
+            // JLPT quick buttons
+            . '<div class="cardbox-aicardgen-jlpt-row">'
+            . '<span style="font-size:0.85em; color:#555; margin-right:8px; line-height:2">' . get_string('ai_cardgen_jlpt_label', 'cardbox') . '</span>'
+            . '<button type="button" class="cardbox-jlpt-btn" data-level="N5">N5</button>'
+            . '<button type="button" class="cardbox-jlpt-btn" data-level="N4">N4</button>'
+            . '<button type="button" class="cardbox-jlpt-btn" data-level="N3">N3</button>'
+            . '<button type="button" class="cardbox-jlpt-btn" data-level="N2">N2</button>'
+            . '<button type="button" class="cardbox-jlpt-btn" data-level="N1">N1</button>'
+            . '</div>'
+            // Manual input row
+            . '<div class="cardbox-aicardgen-row" style="margin-top:10px">'
+            . '<input type="text" id="cardbox-aicardgen-input" class="cardbox-aicardgen-input"'
+            .   ' placeholder="' . get_string('ai_cardgen_placeholder', 'cardbox') . '" />'
+            . '<button type="button" id="cardbox-aicardgen-btn" class="btn btn-primary btn-sm">'
+            .   '✨ ' . get_string('ai_cardgen_btn', 'cardbox')
+            . '</button>'
+            . '</div>'
+            . '<div id="cardbox-aicardgen-status" class="cardbox-aicardgen-status"></div>'
+            . '<ul id="cardbox-aicardgen-list" style="margin-top:10px; padding-left:18px; font-size:0.88em; color:#333;"></ul>'
+            . '</div>'
+            . '<hr style="margin: 16px 0">'
+        );
+
         $singleurl = new \moodle_url('example_singleans.csv');
         $singlelink = \html_writer::link($singleurl, 'example_singleans.csv');
         $mform->addElement('static', 'examplesinglecsv', get_string('examplesinglecsv', 'cardbox'), $singlelink);

@@ -14,7 +14,7 @@ description: "Tích hợp GA4 và AI vào plugin Cardbox (Moodle) dạy tiếng 
 
 <div class="title-main">
   <div class="t1">TÍCH HỢP GOOGLE ANALYTICS VÀ AI</div>
-  <div class="t2">VÀO ỨNG DỤNG WEB GIẢNG DẠY TIẾNG NHẬT</div>
+  <div class="t2">VÀO HỖ TRỢ GIẢNG DẠY TIẾNG NHẬT TRÊN NỀN TẢNG MOODLE</div>
   <div class="title-underline"></div>
 </div>
 
@@ -39,17 +39,15 @@ description: "Tích hợp GA4 và AI vào plugin Cardbox (Moodle) dạy tiếng 
 
 ## Mục lục
 
-1. Phân tích thị trường & Đặt vấn đề
+1. Đặt vấn đề
 2. Nền tảng: Moodle & Plugin Cardbox
-3. Hành trình người học & Conversion Funnel
-4. Tích hợp Google Analytics 4 (GA4)
-5. Tích hợp AI — (1) AI Hint: Gợi ý câu hỏi
-6. Tích hợp AI — (2) AI Explain: Giải thích câu trả lời sai
-7. Tích hợp AI — (3) Nhập thẻ hàng loạt (Mass Import CSV)
-8. Kiến trúc & Triển khai
-9. Kết quả & KPI Marketing
-10. Hạn chế & Hướng phát triển
-11. Q&A
+3. Flashcard — Hiệu quả & So sánh
+4. Kiến trúc hệ thống tích hợp
+5. Tích hợp Google Analytics 4 (GA4)
+6. Tích hợp AI — (1) AI Hint: Gợi ý câu hỏi
+7. Tích hợp AI — (2) AI Explain: Giải thích câu trả lời sai
+8. Hạn chế & Hướng phát triển
+9. Q&A
 
 ---
 
@@ -101,38 +99,66 @@ description: "Tích hợp GA4 và AI vào plugin Cardbox (Moodle) dạy tiếng 
 
 ---
 
-## Hành trình người học & Conversion Funnel
+## Flashcard — Hiệu quả được chứng minh
 
-Nhìn ứng dụng học tiếng Nhật như một **sản phẩm EdTech** — người học đi qua 5 giai đoạn:
+<table style="width:100%; border-collapse:separate; border-spacing:12px; font-size:0.82em; margin-top:16px">
+<tr>
+  <td style="background:#e8f0fe; border-radius:10px; border-left:5px solid #1a56db; padding:18px 20px; vertical-align:top; width:33%">
+    <div style="font-size:2.4em; font-weight:900; color:#1a56db; line-height:1">200%</div>
+    <div style="color:#333; margin-top:6px">ghi nhớ tốt hơn với <strong>Spaced Repetition</strong> so với đọc thụ động</div>
+    <div style="color:#888; font-size:0.85em; margin-top:4px">Cepeda et al., 2008</div>
+  </td>
+  <td style="background:#e6f4ea; border-radius:10px; border-left:5px solid #137333; padding:18px 20px; vertical-align:top; width:33%">
+    <div style="font-size:2.4em; font-weight:900; color:#137333; line-height:1">50%</div>
+    <div style="color:#333; margin-top:6px">ít thời gian hơn để đạt <strong>2.000 từ vựng</strong> tiếng Nhật</div>
+    <div style="color:#888; font-size:0.85em; margin-top:4px">Nation, 2001 — SRS vs Textbook</div>
+  </td>
+  <td style="background:#fce8e6; border-radius:10px; border-left:5px solid #c5221f; padding:18px 20px; vertical-align:top; width:34%">
+    <div style="font-size:2.4em; font-weight:900; color:#c5221f; line-height:1">80%</div>
+    <div style="color:#333; margin-top:6px">tỷ lệ nhớ lại sau <strong>1 tuần</strong> với flashcard vs ~20% học thụ động</div>
+    <div style="color:#888; font-size:0.85em; margin-top:4px">Roediger & Karpicke, 2006</div>
+  </td>
+</tr>
+</table>
 
-| Giai đoạn | Hành động | GA4 đo lường |
-|:---|:---|:---|
-| **Awareness** | Truy cập site lần đầu | New Users, Traffic Source |
-| **Activation** | Bắt đầu phiên luyện | `practice_session_started` |
-| **Engagement** | Hoàn thành phiên, trả lời đúng | `card_answered`, Duration |
-| **Retention** | Quay lại học ngày hôm sau | DAU, WAU, Returning Users |
-| **Mastery** | Hoàn thành chủ đề | Cards mastered rate |
+---
 
-> **Insight**: AI cải thiện **Engagement** và **Retention** — hai giai đoạn mất người dùng nhiều nhất.
+## Flashcard vs. Học truyền thống
+
+<table style="width:100%; border-collapse:separate; border-spacing:12px; font-size:0.82em; margin-top:16px">
+<tr>
+  <td style="background:#f4f4f4; border-radius:10px; padding:18px 20px; vertical-align:top; width:48%">
+    <div style="font-weight:700; color:#555; font-size:1em; margin-bottom:10px">📚 Học truyền thống</div>
+    <ul style="color:#666; margin:0; padding-left:18px; line-height:2">
+      <li>Đọc − ghi lại − đọc lại</li>
+      <li>Không có phản hồi tức thì</li>
+      <li>Ôn tập đồng loạt, không cá nhân hoá</li>
+      <li>Đường cong quên lãng dốc</li>
+    </ul>
+  </td>
+  <td style="background:#e8f0fe; border-radius:10px; padding:18px 20px; vertical-align:top; width:48%">
+    <div style="font-weight:700; color:#1a56db; font-size:1em; margin-bottom:10px">🃏 Flashcard + Spaced Repetition</div>
+    <ul style="color:#333; margin:0; padding-left:18px; line-height:2">
+      <li><strong>Active Recall</strong> — buộc não tự nhớ lại</li>
+      <li>Phản hồi ngay lập tức (đúng/sai)</li>
+      <li>Ôn đúng lúc — tối ưu trí nhớ dài hạn</li>
+      <li>10–15 phút/ngày đủ tiến bộ rõ rệt</li>
+    </ul>
+  </td>
+</tr>
+</table>
 
 ---
 
 ## Tổng quan hệ thống tích hợp
 
-**Hai lớp tích hợp độc lập vào Moodle LMS:**
+Hai lớp tích hợp **độc lập**, **không xâm phạm** vào core Moodle:
 
-**Lớp 1 — GA4 (Đo lường hành vi)**
-- `gtag.js` nhúng vào toàn site qua Additional HTML → HEAD
-- Custom events từ `js/practice.js` → GA4 Dashboard
-
-**Lớp 2 — AI Features (Nâng cao UX)**
-- `action.php` xử lý AJAX từ `practice.js`
-- Dùng Moodle `core_ai` subsystem → tương thích mọi LLM được cấu hình
-- OpenAI Images API trực tiếp cho AI Image Hint
-
-**Nguyên tắc: Non-invasive & Incremental**
-- GA4: triển khai < 30 phút, không cần sửa code plugin
-- AI: bật/tắt từng tính năng độc lập, không ảnh hưởng luồng học nếu AI ngoại tuyến
+| | Lớp 1 — GA4 | Lớp 2 — AI Features |
+|:---|:---|:---|
+| **Mục tiêu** | Đo lường hành vi học tập | Nâng cao trải nghiệm người học |
+| **Cách hoạt động** | `gtag.js` nhúng vào HEAD site | `action.php` gọi `core_ai` subsystem |
+| **Triển khai** | < 30 phút, không sửa code | Bật/tắt từng tính năng độc lập |
 
 ---
 
@@ -140,32 +166,44 @@ Nhìn ứng dụng học tiếng Nhật như một **sản phẩm EdTech** — n
 
 ## Kiến trúc plugin trong Moodle
 
-<div style="font-family:monospace; font-size:0.72em; line-height:1.6; padding:8px 0">
-
-```
-┌─────────────────────────── Moodle LMS ───────────────────────────────┐
-│                                                                       │
-│   Browser          mod_cardbox Plugin           Moodle Core          │
-│  ┌────────┐       ┌──────────────────────┐    ┌──────────────────┐   │
-│  │        │ AJAX  │ action.php           │    │ core_ai          │   │
-│  │practice│──────▶│  - aihint            │───▶│ (generate_text)  │   │
-│  │ .js    │       │  - aiexplain         │    └──────────────────┘   │
-│  │        │       │  - aihint_image ─────│──────────────────────────────▶ OpenAI Images API
-│  │ga4Track│──┐    └──────────────────────┘                           │
-│  └────────┘  │     ┌─────────────────────┐                           │
-│              │     │ Database (Moodle DB)│                           │
-│              │     │  mdl_cardbox_cards  │                           │
-│              │     └─────────────────────┘                           │
-└──────────────┼───────────────────────────────────────────────────────┘
-               │ gtag('event', ...)
-               ▼
-        ┌─────────────┐
-        │  GA4 Server │
-        │  Dashboard  │
-        └─────────────┘
-```
-
-</div>
+<table style="width:100%; border-collapse:separate; border-spacing:0; font-size:0.78em; margin-top:10px">
+<tr>
+  <td style="width:28%; background:#e8f0fe; border-radius:10px; border-top:4px solid #1a56db; padding:12px 14px; vertical-align:top">
+    <strong style="color:#1a56db; font-size:1.05em">🖥 Browser</strong><br><br>
+    <code>practice.js</code><br>
+    <span style="color:#555">└ render thẻ flashcard</span><br>
+    <span style="color:#555">└ nhận input người dùng</span><br><br>
+    <code>ga4Track()</code><br>
+    <span style="color:#555">└ gửi custom events</span>
+  </td>
+  <td style="width:6%; text-align:center; vertical-align:middle; font-size:1.6em; color:#1a56db; padding:0 4px">
+    ──<br>AJAX<br>──▶
+  </td>
+  <td style="width:28%; background:#fce8e6; border-radius:10px; border-top:4px solid #c5221f; padding:12px 14px; vertical-align:top">
+    <strong style="color:#c5221f; font-size:1.05em">⚙️ mod_cardbox</strong><br><br>
+    <code>action.php</code><br>
+    <span style="color:#555">└ xử lý request</span><br>
+    <span style="color:#555">└ chấm bài, gọi AI</span><br><br>
+    <code>mdl_cardbox_*</code><br>
+    <span style="color:#555">└ lưu thẻ & thống kê</span>
+  </td>
+  <td style="width:6%; text-align:center; vertical-align:middle; font-size:1.6em; color:#137333; padding:0 4px">──▶</td>
+  <td style="width:32%; vertical-align:top">
+    <div style="background:#e6f4ea; border-radius:8px; border-top:4px solid #137333; padding:10px 14px; margin-bottom:8px">
+      <strong style="color:#137333">🤖 core_ai (Moodle)</strong><br>
+      <span style="color:#555; font-size:0.95em">AI Hint · AI Explain · bất kỳ LLM nào</span>
+    </div>
+    <div style="background:#fff3e0; border-radius:8px; border-top:4px solid #e65100; padding:10px 14px; margin-bottom:8px">
+      <strong style="color:#e65100">🖼 OpenAI Images API</strong><br>
+      <span style="color:#555; font-size:0.95em">AI Image Hint (gợi ý bằng hình)</span>
+    </div>
+    <div style="background:#fef9e7; border-radius:8px; border-top:4px solid #f0ad4e; padding:10px 14px">
+      <strong style="color:#d68910">📊 GA4 Server</strong><br>
+      <span style="color:#555; font-size:0.95em">← gtag() từ Browser · phân tích hành vi</span>
+    </div>
+  </td>
+</tr>
+</table>
 
 ---
 
@@ -236,15 +274,36 @@ Các chỉ số theo dõi trên GA4 Dashboard:
 
 ## Tích hợp AI — (1) AI Hint: Gợi ý câu hỏi
 
-**Vấn đề:** Người học gặp thẻ khó → bỏ cuộc → thoát phiên học → **mất Engagement**
+**Giải pháp:** Nút **"✨ AI gợi ý"** — gợi ý thông minh, **cá nhân hóa theo từng người học**
 
-**Giải pháp:** Nút **" AI gợi ý"** — giúp người học vượt qua điểm tắc mà không bị tiết lộ đáp án
+AI đọc lịch sử của **người dùng hiện tại** với **thẻ hiện tại** từ DB → chọn mức gợi ý phù hợp:
 
-- Gợi ý **1–2 câu ngắn** giúp gợi nhớ, song ngữ Việt–Nhật
-- **Gợi ý văn bản**: mô tả, liên tưởng ngữ nghĩa
-- **Gợi ý hình ảnh**: sinh ảnh minh hoạ trực quan qua OpenAI Images API
-
-> Người học không cần chọn "Tôi không biết" — họ có cơ hội nhớ lại và trả lời đúng.
+<table style="width:100%; border-collapse:separate; border-spacing:8px; font-size:0.8em; margin-top:6px">
+<tr style="font-weight:700; text-align:center">
+  <td style="background:#f0f0f0; border-radius:8px; padding:8px">Dữ liệu người học</td>
+  <td style="background:#f0f0f0; border-radius:8px; padding:8px">→</td>
+  <td style="background:#f0f0f0; border-radius:8px; padding:8px">Mức gợi ý</td>
+  <td style="background:#f0f0f0; border-radius:8px; padding:8px">Kiểu prompt AI</td>
+</tr>
+<tr>
+  <td style="background:#fce8e6; border-radius:8px; padding:8px; color:#c5221f">Hộp 1 · sai ≥ 5 lần</td>
+  <td style="text-align:center">→</td>
+  <td style="background:#fce8e6; border-radius:8px; padding:8px; font-weight:700; color:#c5221f">🔴 Mức 1 — Khó</td>
+  <td style="color:#555; padding:8px">Gợi ý chi tiết, nhiều liên tưởng</td>
+</tr>
+<tr>
+  <td style="background:#fff8e1; border-radius:8px; padding:8px; color:#b45309">Hộp 1 · sai 2–4 lần</td>
+  <td style="text-align:center">→</td>
+  <td style="background:#fff8e1; border-radius:8px; padding:8px; font-weight:700; color:#b45309">🟡 Mức 2 — Đang học</td>
+  <td style="color:#555; padding:8px">Gợi ý nhẹ + liên tưởng trực quan</td>
+</tr>
+<tr>
+  <td style="background:#e6f4ea; border-radius:8px; padding:8px; color:#137333">Hộp 3+ · từng đúng</td>
+  <td style="text-align:center">→</td>
+  <td style="background:#e6f4ea; border-radius:8px; padding:8px; font-weight:700; color:#137333">🟢 Mức 3 — Từng biết</td>
+  <td style="color:#555; padding:8px">Gợi ý ngắn, kích hoạt lại ký ức</td>
+</tr>
+</table>
 
 ---
 
@@ -354,45 +413,6 @@ Người học hiểu lý do sai → nhớ lâu hơn → **quay lại học** �
 
 ---
 
-## Kiến trúc & Triển khai
-
-**Lớp 1 — GA4 (Đo lường hành vi):**
-- Nhúng `gtag.js` vào `HEAD` qua Additional HTML — không sửa code plugin
-- **Triển khai < 30 phút**, track toàn bộ hành vi ngay lập tức
-
-**Lớp 2 — AI Features (Nâng cao UX):**
-- `action.php` gọi `core_ai` subsystem khi người học yêu cầu
-- Không ảnh hưởng luồng học nếu AI provider ngoại tuyến
-- Bật/tắt từng tính năng độc lập (Hint / Explain / Image)
-
-**Nguyên tắc: Non-invasive & Incremental**
-> Tích hợp từng bước, đo lường từng bước — không thay thế toàn bộ hệ thống.
-
-
----
-
-## Kết quả & KPI Marketing
-
-### GA4 — Lần đầu đo được hành vi người học
-
-| KPI | Kết quả | Insight |
-|:---|:---|:---|
-| Traffic Source | Đo được | Phần lớn đến từ link LMS nội bộ — cơ hội mở rộng kênh |
-| Drop-off point | **Phát hiện** | Người học bỏ nhiều nhất ở **thẻ Kanji N4** (tỷ lệ sai > 70%) |
-| Returning Users | Đo được lần đầu | Baseline để đánh giá hiệu quả AI về sau |
-| Session Duration | Đo được | Cơ sở so sánh trước/sau khi tích hợp AI |
-
-### AI — Tính năng đã triển khai
-
-| Tính năng | Kết quả |
-|:---|:---|
-| **AI Hint (text)** | Người học nhận gợi ý không tiết lộ đáp án, song ngữ Việt-Nhật |
-| **AI Hint (image)** | Sinh ảnh minh hoạ qua OpenAI Images API (gpt-image-1-mini) |
-| **AI Explain** | Giải thích câu sai song ngữ Việt-Nhật, giảm frustration |
-| **Mass Import CSV** | Nhập hàng loạt thẻ từ LLM-generated content, auto-approve |
-
----
-
 ## Hạn chế
 
 - **GA4 & quyền riêng tư**: Cần tuân thủ GDPR/chính sách dữ liệu của trường; không thu thập dữ liệu nhận dạng cá nhân
@@ -404,9 +424,8 @@ Người học hiểu lý do sai → nhớ lâu hơn → **quay lại học** �
 
 ## Hướng phát triển
 
-- **AI Hint nâng cao**: Cá nhân hóa gợi ý theo lịch sử sai lầm của từng người học
-- **AI Auto-check ngữ nghĩa**: Dùng AI thay thế exact match — chấp nhận `食べる` / `たべる` / `taberu` đều đúng
-- **AI Card Generator (nội bộ)**: Tích hợp LLM trực tiếp vào giao diện plugin để giảng viên sinh thẻ ngay trong Moodle
+- ~~**AI Hint cá nhân hóa**~~: ✅ **Đã triển khai** — gợi ý thay đổi theo lịch sử sai/đúng của từng thẻ
+- ~~**AI Card Generator**~~: ✅ **Đã triển khai** — nhập từ/chủ đề hoặc chọn cấp JLPT (N1–N5), AI tự tạo thẻ và lưu ngay vào bộ thẻ
 - **GA4 + BigQuery**: Xuất dữ liệu vào BigQuery để phân tích cohort và dự đoán nguy cơ bỏ học
 
 ---

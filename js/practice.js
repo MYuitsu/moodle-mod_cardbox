@@ -532,12 +532,24 @@ class EventHandling {
                             id: controller.cmid,
                             action: 'aihint',
                             questiontext: getQuestionText(),
+                            cardid: controller.cardId,
                             sesskey: M.cfg.sesskey
                         }
                     }).then(function(data) {
                         var result = JSON.parse(data);
                         if (result.status === 'success') {
-                            aiHintContent.innerHTML = result.content;
+                            var levelLabels = {
+                                'struggling': {text: '🔴 Mức 1 — Khó: gợi ý chi tiết', cls: 'cardbox-hint-badge-struggling'},
+                                'retry':      {text: '🟡 Mức 2 — Đang học: gợi ý có liên tưởng', cls: 'cardbox-hint-badge-retry'},
+                                'known':      {text: '🟢 Mức 3 — Từng biết: kích hoạt lại ký ức', cls: 'cardbox-hint-badge-known'},
+                                'new':        {text: '', cls: ''}
+                            };
+                            var level = result.hint_level || 'new';
+                            var badge = '';
+                            if (levelLabels[level] && levelLabels[level].text) {
+                                badge = '<div class="cardbox-hint-badge ' + levelLabels[level].cls + '">' + levelLabels[level].text + '</div>';
+                            }
+                            aiHintContent.innerHTML = badge + result.content;
                         } else {
                             aiHintContent.innerHTML = result.reason || M.util.get_string('ai_error', 'cardbox');
                         }

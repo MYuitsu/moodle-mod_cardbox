@@ -151,11 +151,38 @@ if ($action === 'aihint') {
     require_capability('mod/cardbox:useai', $context);
 
     $questiontext = required_param('questiontext', PARAM_TEXT);
+    $cardid = optional_param('cardid', 0, PARAM_INT);
+
+    // Build personalized context from learner's error history.
+    $historycontext = '';
+    $hintlevel = 'new';
+    if ($cardid > 0) {
+        $progress = $DB->get_record('cardbox_progress', ['userid' => $USER->id, 'card' => $cardid]);
+        if ($progress) {
+            $repetitions = (int) $progress->repetitions;
+            $cardposition = (int) $progress->cardposition;
+            if ($cardposition == 1 && $repetitions >= 5) {
+                $historycontext = get_string('ai_hint_history_struggling', 'cardbox', $repetitions);
+                $hintlevel = 'struggling';
+            } else if ($cardposition == 1 && $repetitions >= 2) {
+                $historycontext = get_string('ai_hint_history_retry', 'cardbox', $repetitions);
+                $hintlevel = 'retry';
+            } else if ($cardposition >= 3) {
+                $historycontext = get_string('ai_hint_history_known', 'cardbox');
+                $hintlevel = 'known';
+            }
+        }
+    }
 
     // Build the prompt.
     $promptdata = new stdClass();
     $promptdata->question = $questiontext;
-    $prompt = get_string('ai_hint_prompt', 'cardbox', $promptdata);
+    $promptdata->history = $historycontext;
+    $prompt = get_string(
+        $historycontext ? 'ai_hint_prompt_personalized' : 'ai_hint_prompt',
+        'cardbox',
+        $promptdata
+    );
 
     // Call the AI subsystem.
     try {
@@ -170,7 +197,7 @@ if ($action === 'aihint') {
         if ($response->get_success()) {
             $responsedata = $response->get_response_data();
             $generatedcontent = $responsedata['generatedcontent'] ?? '';
-            echo json_encode(['status' => 'success', 'content' => format_text($generatedcontent, FORMAT_MARKDOWN)]);
+            echo json_encode(['status' => 'success', 'content' => format_text($generatedcontent, FORMAT_MARKDOWN), 'hint_level' => $hintlevel]);
         } else {
             echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
         }
@@ -252,6 +279,125 @@ if ($action === 'aihintimage') {
                 'reason' => get_string('ai_error', 'cardbox'),
                 'debug'  => $e->getMessage()]);
         }
+    }
+}
+
+/* ****************************************** AI Card Generator — JLPT Level **************************************************** */
+
+if ($action === 'aicardgenjlpt') {
+
+    require_capability('mod/cardbox:submitcard', $context);
+    require_once($CFG->dirroot . '/mod/cardbox/locallib.php');
+
+    $level = required_param('level', PARAM_ALPHA); // N1 N2 N3 N4 N5
+    $allowed = ['N1', 'N2', 'N3', 'N4', 'N5'];
+    if (!in_array(strtoupper($level), $allowed)) {
+        echo json_encode(['status' => 'error', 'reason' => 'Invalid level']);
+        exit;
+    }
+    $level = strtoupper($level);
+    $cardboxid = $cardbox->id;
+    $prompt = get_string('ai_cardgen_jlpt_prompt', 'cardbox', $level);
+
+    try {
+        $aiaction = new \core_ai\aiactions\generate_text(
+            contextid: $context->id,
+            userid: $USER->id,
+            prompttext: $prompt,
+        );
+        $manager = \core\di::get(\core_ai\manager::class);
+        $response = $manager->process_action($aiaction);
+
+        if ($response->get_success()) {
+            $responsedata = $response->get_response_data();
+            $generatedcontent = $responsedata['generatedcontent'] ?? '';
+            $jsonstart = strpos($generatedcontent, '{');
+            $jsonend   = strrpos($generatedcontent, '}');
+            if ($jsonstart !== false && $jsonend !== false) {
+                $jsonstr  = substr($generatedcontent, $jsonstart, $jsonend - $jsonstart + 1);
+                $carddata = json_decode($jsonstr, true);
+                if ($carddata && isset($carddata['question']) && isset($carddata['answer'])) {
+                    $questiontext = clean_param(strip_tags($carddata['question']), PARAM_TEXT);
+                    $answertext   = clean_param(strip_tags($carddata['answer']), PARAM_TEXT);
+                    $ismanager = has_capability('mod/cardbox:approvecard', $context);
+                    $cardid = cardbox_save_new_card($cardboxid, $context, $ismanager);
+                    cardbox_save_new_cardcontent($cardid, CARDBOX_CARDSIDE_QUESTION, CARDBOX_CONTENTTYPE_TEXT, $questiontext, CARD_MAIN_INFORMATION);
+                    cardbox_save_new_cardcontent($cardid, CARDBOX_CARDSIDE_ANSWER,   CARDBOX_CONTENTTYPE_TEXT, $answertext,   CARD_MAIN_INFORMATION);
+                    echo json_encode([
+                        'status'     => 'success',
+                        'cardid'     => $cardid,
+                        'question'   => $questiontext,
+                        'answer'     => $answertext,
+                        'jlpt_level' => $level,
+                    ]);
+                } else {
+                    echo json_encode(['status' => 'error', 'reason' => get_string('ai_cardgen_error', 'cardbox')]);
+                }
+            } else {
+                echo json_encode(['status' => 'error', 'reason' => get_string('ai_cardgen_error', 'cardbox')]);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox')]);
+    }
+}
+
+/* ****************************************** AI Card Generator (Mass Import page) ********************************** */
+
+if ($action === 'aicardgensave') {
+
+    require_capability('mod/cardbox:submitcard', $context);
+    require_once($CFG->dirroot . '/mod/cardbox/locallib.php');
+
+    $topic = required_param('topic', PARAM_TEXT);
+    $cardboxid = $cardbox->id;
+    $prompt = get_string('ai_cardgen_prompt', 'cardbox', $topic);
+
+    try {
+        $aiaction = new \core_ai\aiactions\generate_text(
+            contextid: $context->id,
+            userid: $USER->id,
+            prompttext: $prompt,
+        );
+        $manager = \core\di::get(\core_ai\manager::class);
+        $response = $manager->process_action($aiaction);
+
+        if ($response->get_success()) {
+            $responsedata = $response->get_response_data();
+            $generatedcontent = $responsedata['generatedcontent'] ?? '';
+            // Extract JSON from AI response (AI may wrap in markdown fences)
+            $jsonstart = strpos($generatedcontent, '{');
+            $jsonend   = strrpos($generatedcontent, '}');
+            if ($jsonstart !== false && $jsonend !== false) {
+                $jsonstr  = substr($generatedcontent, $jsonstart, $jsonend - $jsonstart + 1);
+                $carddata = json_decode($jsonstr, true);
+                if ($carddata && isset($carddata['question']) && isset($carddata['answer'])) {
+                    $questiontext = clean_param(strip_tags($carddata['question']), PARAM_TEXT);
+                    $answertext   = clean_param(strip_tags($carddata['answer']), PARAM_TEXT);
+                    // Save card to DB (approved because teacher is creating it)
+                    $ismanager = has_capability('mod/cardbox:approvecard', $context);
+                    $cardid = cardbox_save_new_card($cardboxid, $context, $ismanager);
+                    cardbox_save_new_cardcontent($cardid, CARDBOX_CARDSIDE_QUESTION, CARDBOX_CONTENTTYPE_TEXT, $questiontext, CARD_MAIN_INFORMATION);
+                    cardbox_save_new_cardcontent($cardid, CARDBOX_CARDSIDE_ANSWER,   CARDBOX_CONTENTTYPE_TEXT, $answertext,   CARD_MAIN_INFORMATION);
+                    echo json_encode([
+                        'status'   => 'success',
+                        'cardid'   => $cardid,
+                        'question' => $questiontext,
+                        'answer'   => $answertext,
+                    ]);
+                } else {
+                    echo json_encode(['status' => 'error', 'reason' => get_string('ai_cardgen_error', 'cardbox')]);
+                }
+            } else {
+                echo json_encode(['status' => 'error', 'reason' => get_string('ai_cardgen_error', 'cardbox')]);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'reason' => get_string('ai_error_noprovider', 'cardbox')]);
+        }
+    } catch (Exception $e) {
+        echo json_encode(['status' => 'error', 'reason' => get_string('ai_error', 'cardbox')]);
     }
 }
 

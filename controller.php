@@ -742,6 +742,12 @@ if ($action === 'massimport') {
         // Data provision.
         $customdata = array('cardboxid' => $cardbox->id, 'cmid' => $cmid, 'context' => $context);
         $mform = new \mod_cardbox\output\massimport_form(null, $customdata);
+        // Load AI card generator JS for this page.
+        $stringman2 = get_string_manager();
+        $strings2 = $stringman2->load_component_strings('cardbox', 'en');
+        $PAGE->requires->strings_for_js(array_keys($strings2), 'cardbox');
+        $PAGE->requires->js(new moodle_url('/mod/cardbox/js/aicardgen.js?ver=00001'));
+        $PAGE->requires->js_init_call('initAiCardGen', [$cmid], true);
         if ($formdata = $mform->get_data()) {
 
             // Store csv content in moodledata/temp for next step.

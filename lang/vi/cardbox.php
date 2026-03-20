@@ -358,3 +358,18 @@ $string['option_placeholder_5'] = 'Lựa chọn E';
 $string['option_placeholder_6'] = 'Lựa chọn F';
 $string['option_placeholder_7'] = 'Lựa chọn G';
 $string['option_placeholder_8'] = 'Lựa chọn H';
+
+// AI features.
+$string['ai_cardgen_jlpt_label'] = 'Gợi ý theo cấp JLPT:';
+$string['ai_cardgen_jlpt_prompt'] = 'Bạn là trợ lý tạo thẻ flashcard học tiếng Nhật. Tạo 1 thẻ flashcard ngẫu nhiên từ danh sách từ vựng JLPT cấp {$a} (chọn một từ khác mỗi lần). Trả về đúng định dạng JSON sau, không có gì khác ngoài JSON: {"question":"câu hỏi bằng tiếng Việt yêu cầu người học nhập từ hoặc cụm từ tiếng Nhật","answer":"từ tiếng Nhật kèm cách đọc romaji và nghĩa tiếng Việt ngắn gọn"}';
+$string['ai_cardgen_label'] = 'Tạo thẻ tự động bằng AI';
+$string['ai_cardgen_massdesc'] = 'Nhập từ/chủ đề bên dưới để AI tự động tạo thẻ câu hỏi–đáp án tiếng Nhật, hoặc chọn cấp JLPT để gợi ý từ ngẫu nhiên.';
+$string['ai_cardgen_placeholder'] = 'Nhập từ hoặc chủ đề tiếng Nhật...';
+$string['ai_cardgen_btn'] = 'AI tạo thẻ';
+$string['ai_cardgen_loading'] = 'Đang tạo thẻ...';
+$string['ai_cardgen_saved'] = 'Đã lưu thẻ mới!';
+$string['ai_cardgen_success'] = 'Tạo thẻ thành công';
+$string['ai_cardgen_error'] = 'Không thể tạo thẻ. Vui lòng thử lại.';
+$string['ai_cardgen_empty'] = 'Vui lòng nhập từ hoặc chủ đề trước.';
+$string['ai_error'] = 'Lỗi AI. Vui lòng thử lại.';
+$string['ai_error_noprovider'] = 'Chưa có nhà cung cấp AI nào được cấu hình.';
